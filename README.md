@@ -27,7 +27,7 @@ This is a repository for a web application for the University of Helsinki course
   -  The database tables and columns are named in English.
 
 ### Version control
-  -  README.md will document how the application and how to test it.
+  -  `README.md` will document how the application and how to test it.
   -  Commits will be done regularly and in English during development.
 
 ### Cybersec
@@ -36,10 +36,48 @@ This is a repository for a web application for the University of Helsinki course
   -  User rights to send a form will be checked.
   -  User inputs will be checked before being parsed and sent to the database.
   -  SQL commands will use parameters.
-  -  Pages are rendered via page templates (render_template).
+  -  Pages are rendered via page templates (`render_template`).
   -  Forms have a CSRF vulnerability blocked.
 
+### Peer review and returns
+  -  First peer review complete.
+  -  Second peer review complete.
+
 ## Advanced requirements
+### UX
   -  The application is easy and logical to use.
   -  The appearance is implemented using CSS.
   -  The Pylint tool was used and the results were reported.
+  -  **Line breaks applied by the user is visible in text.**
+  -  **Pictures, if present in the app, use `alt` attribute.**
+  -  **The form uses `label` elements**
+    
+### Version control
+  -  No extraneous or needless files in version control.
+  -  Commits are clean, inform all changes with good messages.
+    
+### Programming style
+  -  Variables and functions named descriptively and clearly.
+  -  Use standardised tab length of four spaces.
+  -  Code does not have overly long lines
+  -  Use `snake_case` for names. No `Title_Case`, no `camelCase`, no `PascalCase`.
+  -  Proper spaces around `=` and `,`.
+  -  No extraneous parentheses around `if` and `while` structures.
+  -  **Used Pylint-tools and reported the results in its own separate file.**
+    
+### Database style
+  -  Tables and columns are named descriptively and clearly.
+  -  Use of `REFERENCES` in referral to other tables.
+  -  No use of `SELECT *` (Always have a specific column / columns in search named)
+  -  Use SQL features in a sensible way.
+    
+### Peer review and returns
+  -  First peer review conducted comprehensively.
+  -  Second peer review conducted comprehensively.
+  -  Course response given.
+
+### **Large database processing**
+  -  The app is tested on larger databases and results are reported.
+  -  Pagination of data items used in the application.
+  -  Database uses indexes to speed up processing of larger databases.
+  -  A suitable way to report the results is to add the `seed.py` file to the repository and write a `README.md` file describing the application's operation with a large amount of information.
