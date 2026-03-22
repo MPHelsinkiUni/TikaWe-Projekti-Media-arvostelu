@@ -1,6 +1,17 @@
 # TikaWe-Projekti-Media-arvostelu
 This is a repository for a web application for the University of Helsinki course - Databases and web programming. The programmer is The Dat Vo, nicknamed Michael. The application is a media review, but its structure can be generalized to other applications
 
+# Project details
+**Media review page**
+- In the application, users can post reviews of any media. The review includes a title, text, media name, review number where applicable
+- The user can create an account and log in to the application.
+- The user can add previous justified reviews, edit them and delete them.
+- The user can see the reviews added to the application and search for reviews with many options, e.g. work, reviewer, year, etc.
+- The user page has and can show all reviews and other statistics about users.
+- Reviews can be categorized by genre.
+- The user can give comments to reviews and comments can link to each other.
+- The average value of the work can be searched.
+
 # Checklist
 ## Basic requirements
 ### Application requirements
@@ -81,3 +92,7 @@ This is a repository for a web application for the University of Helsinki course
   -  Pagination of data items used in the application.
   -  Database uses indexes to speed up processing of larger databases.
   -  A suitable way to report the results is to add the `seed.py` file to the repository and write a `README.md` file describing the application's operation with a large amount of information.
+
+# Diary
+## 22.3.2026
+Currently the files have merely being tested using course material. This is the first time the page will be constructed.

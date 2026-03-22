@@ -2,14 +2,28 @@
 <html>
 
 <head>
-  <title>Etusivu</title>
+  <title>Media4U</title>
 </head>
 
 <body>
-  <h1>Etusivu</h1>
+  <h1>Media4U</h1>
   <p>
-    <b>Tervetuloa</b> <i>sovellukseen</i>!
+    <b>Welcome to the</b> <i>media review site</i>!
   </p>
+
+  {% if session.username %}
+  <p>
+    Hello, {{ session.username }}
+  </p>
+  <p>
+    <a href="/logout">Sign out</a>
+  </p>
+  {% else %}
+  <p>
+    <a href="/login"> Login </a>>
+    <a href="/register"> Register </a>>
+  </p>
+  {% endif %}
 
   <p>{{ message }}</p>
   <ul>
