@@ -69,6 +69,11 @@ def logout():
     del session["username"]
     return redirect("/")
 
+##################
+# This section manages the addition of new reviews themselves.
+@app.route("/review_paper")
+def new_review():
+    return render_template("review_paper.html")
 
 
 #################### 

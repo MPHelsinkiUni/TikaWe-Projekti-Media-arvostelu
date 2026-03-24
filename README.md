@@ -96,3 +96,5 @@ This is a repository for a web application for the University of Helsinki course
 # Diary
 ## 22.3.2026
 Currently the files have merely being tested using course material. This is the first time the page will be constructed.
+## 25.3.2026
+In preparation for implementing the review system, the database has been massively expanded, with missing components and added redundancy. Page for adding those reviews have been prepared but function is not ready.
