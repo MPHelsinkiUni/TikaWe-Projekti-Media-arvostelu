@@ -93,8 +93,10 @@ This is a repository for a web application for the University of Helsinki course
   -  Database uses indexes to speed up processing of larger databases.
   -  A suitable way to report the results is to add the `seed.py` file to the repository and write a `README.md` file describing the application's operation with a large amount of information.
 
-# Diary
+# Journal
 ## 22.3.2026
 Currently the files have merely being tested using course material. This is the first time the page will be constructed.
 ## 25.3.2026
 In preparation for implementing the review system, the database has been massively expanded, with missing components and added redundancy. Page for adding those reviews have been prepared but function is not ready.
+## 27.3.2026
+The login and post system is ... "functional". The database, however, still requires referneces, indexing and other touchups. The decision was made to split up the image implementation of the database into multiple separate tables to enable easy referencing and image implementation into other components of the database.

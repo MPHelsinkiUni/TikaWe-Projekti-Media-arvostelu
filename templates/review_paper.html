@@ -9,15 +9,63 @@
 <!-- The bulk of the review system will be put in here.-->
 <!-- The implementation here is that the username and id of poster will be inserted automatically in the backend.-->
   <h1>New review</h1>
-  <form action="/create_item" method="post">
+  <form action="/create_review" method="post">
 
     <!-- Title -->
     <p>
         Title: <br/>
-        <input type="text" name="title" />
+        <input 
+          type="text" 
+          name="title" 
+          minlength="1"
+          maxlength="255" 
+          required/>
     </p>
 
     <!-- Review body text-->
+     <p>
+         Body: <br/>
+         <textarea 
+          type="text" 
+          name="review_body"
+          rows="8"
+          cols="60">
+         </textarea>
+     </p>
+
+    <!-- Pick the score from 0 to 5. Nothing means unranked. Can be null-->
+    <p>
+        Stars:
+    </p>
+    <p>
+      <input type="radio" name="stars" value="0" /> 0
+      <input type="radio" name="stars" value="1" /> 1
+      <input type="radio" name="stars" value="2" /> 2
+      <input type="radio" name="stars" value="3" /> 3
+      <input type="radio" name="stars" value="4" /> 4
+      <input type="radio" name="stars" value="5" /> 5
+    </p>
+
+    <!-- Work being reviewed. Work id will be placed automatically **according to the imdb database.** This will be separate from the name of the work according to imdb-->
+     <p>
+         Work name: <br/>
+         <input 
+          type="text" 
+          name="work"
+          minlength="1"
+          maxlength="255"/>
+     </p>
+
+     <!-- IMDb work snippet-->
+     <p>
+         IMDb links: <br/>
+         <input 
+          type="text" 
+          name="imdb_snippet"
+          minlength="3"
+          maxlength="255"/>
+     </p>
+     <input type="submit" value="Submit review"/>
 
   </form>
 </body>

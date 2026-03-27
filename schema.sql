@@ -1,49 +1,85 @@
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
-    username TEXT UNIQUE,
-    password_hash TEXT,
-    assignment_role VARCHAR(255),
-    created_at, TIMESTAMP,
-    favourites, TEXT
+    username VARCHAR(255) UNIQUE,
+    password_hash VARCHAR(255),
+    assignment_role VARCHAR(255) DEFAULT "user",
+    created_at TIMESTAMP NOT NULL DEFAULT NOW,
+    favourites VARCHAR(65535),
+    thumbnail IMAGE
+);
+CREATE TABLE images_users (
+    id INTEGER PRIMARY KEY,
+    image_file IMAGE
 );
 
 CREATE TABLE reviews (
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    poster TEXT NOT NULL,
-    poster_id INTEGER NOT NULL,
-    review_body TEXT,
-    stars INTEGER,
-    body TEXT NOT NULL,
-    work VARCHAR(255) NOT NULL,
-    work_id INTEGER NOT NULL
-    time_posted TIMESTAMP NOT NULL
-)
-
-CREATE TABLE works (
-    id INTEGER PRIMARY KEY,
-    work_name VARCHAR(255) NOT NULL,
-    genre TEXT,
-    picture IMAGE, 
-    year_of_release INTEGER NOT NULL,
-    month_of_release INTEGER NOT NULL,
-    day_of_release INTEGER NOT NULL,
-)
-
--- Above, the works section should be expanded upon with descriptions and others.
-
-CREATE TABLE images (
+    id INTEGER PRIMARY KEY, 
+    title VARCHAR(255) NOT NULL, -- Input done
+    poster VARCHAR(255) NOT NULL, -- Automatic
+    poster_id INTEGER NOT NULL, -- Automatic
+    review_body VARCHAR(65535), -- Input done
+    stars INTEGER, -- Input done, type radio.
+    work VARCHAR(255) NOT NULL,  -- Input done
+    work_id INTEGER, -- Automatic, will be done later. Set as null allowed for now.
+    time_posted TIMESTAMP NOT NULL DEFAULT NOW, -- Not needed
+    imdb_snippet VARCHAR(255) NOT NULL, -- Important, input done
+    image_file IMAGE -- No implementation yet.
+);
+CREATE TABLE images_reviews (
     id INTEGER PRIMARY KEY,
     image_file IMAGE
-)
+);
+-- No implementation yet. Will be done later WIP!!!
+
+CREATE TABLE works (
+    id INTEGER PRIMARY KEY, 
+    work_name VARCHAR(255) NOT NULL,
+    genre VARCHAR(255),
+    picture IMAGE, 
+    imdb_snippet VARCHAR(255) NOT NULL,
+    year_of_release INTEGER,
+    month_of_release INTEGER,
+    day_of_release INTEGER
+);
+CREATE TABLE images_works (
+    id INTEGER PRIMARY KEY,
+    image_file IMAGE
+);
+
+-- Above, the works section should be expanded upon with descriptions and others for a later time.
 
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     comment_title TEXT NOT NULL,
-    body TEXT NOT NULL,
-    writer TEXT NOT NULL,
+    body VARCHAR(65535) NOT NULL,
+    writer VARCHAR(255) NOT NULL,
     writer_id INTEGER NOT NULL,
-    review_root TEXT NOT NULL,
+    review_root_title VARCHAR(255) NOT NULL,
     review_id INTEGER NOT NULL,
-    time_posted TIMESTAMP NOT NULL
-)
+    time_posted TIMESTAMP NOT NULL DEFAULT NOW
+);
+
+-- Comments will not have pictures at all. They will not be directly referenced.
+
+-- Indexing 
+CREATE UNIQUE INDEX idx_time ON users (created_at, username);
+CREATE UNIQUE INDEX idx_works ON works (work_name);
+CREATE UNIQUE INDEX idx_comments ON comments (id);
+
+-- Referencing for images.
+ALTER TABLE images_works ADD FOREIGN KEY (image_file) REFERENCES works (picture) ON DELETE CASCADE;
+ALTER TABLE images_reviews ADD FOREIGN KEY (image_file) REFERENCES reviews (image_file) ON DELETE CASCADE;
+ALTER TABLE images_users ADD FOREIGN KEY (image_file) REFERENCES reviews (thumbnail) ON DELETE CASCADE;
+-- Referencing for reviews.
+ALTER TABLE reviews ADD FOREIGN KEY (poster) REFERENCES users (username) ON DELETE SET NULL;
+ALTER TABLE reviews ADD FOREIGN KEY (poster_id) REFERENCES users (id) ON DELETE SET NULL;
+ALTER TABLE reviews ADD FOREIGN KEY (work) REFERENCES works (work_name) ON DELETE SET NULL;
+ALTER TABLE reviews ADD FOREIGN KEY (work_id) REFERENCES works (id) ON DELETE SET NULL;
+ALTER TABLE reviews ADD FOREIGN KEY (imdb_snippet) REFERENCES works (imdb_snippet) ON DELETE SET NULL;
+-- Referencing for comments.
+ALTER TABLE comments ADD FOREIGN KEY (writer) REFERENCES users (username) ON DELETE SET NULL;
+ALTER TABLE comments ADD FOREIGN KEY (writer_id) REFERENCES users (id) ON DELETE SET NULL;
+ALTER TABLE comments ADD FOREIGN KEY (review_root_title) REFERENCES reviews (title) ON DELETE SET NULL;
+ALTER TABLE comments ADD FOREIGN KEY (review_id) REFERENCES reviews (id) ON DELETE SET NULL;
+
+

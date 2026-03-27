@@ -2,6 +2,7 @@ import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timezone
 import db
 import config
 
@@ -55,10 +56,13 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         
-        sql = "SELECT password_hash FROM users WHERE username = ?"
-        password_hash = db.query(sql, [username])[0][0]
+        sql = "SELECT id, password_hash FROM users WHERE username = ?"
+        result = db.query(sql, [username])[0]
+        user_id = result["id"]
+        password_hash = result["password_hash"]
 
         if check_password_hash(password_hash, password):
+            session["user_id"] = user_id
             session["username"] = username
             return redirect("/")
         else:
@@ -66,6 +70,7 @@ def login():
 
 @app.route("/logout")
 def logout():
+    del session["user_id"]
     del session["username"]
     return redirect("/")
 
@@ -75,6 +80,29 @@ def logout():
 def new_review():
     return render_template("review_paper.html")
 
+@app.route("/create_review", methods = ["POST"])
+def insert_review():
+    # Input names are: title, review_body, stars, work, imdb_snippet (in HTML page). Linked as such
+    # title -> title
+    # session.username -> poster
+    # session.user_id -> poster_id
+    # review_body -> review_body
+    # stars -> stars
+    # work -> work
+    # work_id snippet will be worked on later. (WIP!!!)
+    # imdb_snippet -> imdb_snippet
+    title = request.form["title"]
+    username = session["username"]
+    user_id = session["user_id"]
+    review_body = request.form["review_body"]
+    stars = int(request.form["stars"])
+    work = request.form["work"]
+    imdb_snippet = request.form["imdb_snippet"]
+    sql = """INSERT INTO reviews (title, poster, poster_id, review_body, stars, work, imdb_snippet) VALUES (?, ?, ?, ?, ?, ?, ?)"""
+    
+    db.execute(sql, [title, username, user_id, review_body, stars, work, imdb_snippet])
+
+    return redirect("/")
 
 #################### 
 # Debugger below
