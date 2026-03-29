@@ -2,16 +2,13 @@
 <html>
 
 <head>
-  <title>Media4U - new review box</title>
+  <title>Edit review</title>
 </head>
 
 <body>
-<!-- The bulk of the review system will be put in here.-->
-<!-- The implementation here is that the username and id of poster will be inserted automatically in the backend.-->
-  <h1>New review</h1>
-  <form action="/create_review" method="post">
+  <h1>Edit review</h1>
+  <form action="/edit_review" method="post">
 
-    <!-- Title -->
     <p>
         Title: <br/>
         <input 
@@ -19,10 +16,10 @@
           name="title" 
           minlength="1"
           maxlength="255" 
-          required/>
+          required
+          value="{{ item.title }}"/>
     </p>
 
-    <!-- Review body text-->
      <p>
          Body: <br/>
          <textarea 
@@ -30,10 +27,10 @@
           name="review_body"
           rows="8"
           cols="60">
-         </textarea>
+         {{ item.review_body }}
+        </textarea>
      </p>
 
-    <!-- Pick the score from 0 to 5. Nothing means unranked. Can be null-->
     <p>
         Stars:
     </p>
@@ -46,27 +43,27 @@
       <input type="radio" name="stars" value="5" /> 5
     </p>
 
-    <!-- Work being reviewed. Work id will be placed automatically **according to the imdb database.** This will be separate from the name of the work according to imdb-->
      <p>
          Work name: <br/>
          <input 
           type="text" 
           name="work"
           minlength="1"
-          maxlength="255"/>
+          maxlength="255"
+          value="{{ item.work }}"/>
      </p>
 
-     <!-- IMDb work snippet-->
      <p>
          IMDb links: <br/>
          <input 
           type="text" 
           name="imdb_snippet"
           minlength="3"
-          maxlength="255"/>
+          maxlength="255"
+          value="{{ item.imdb_snippet }}"/>
      </p>
-     <input type="submit" value="Submit review"/>
-
+     <input type="hidden" name="item_id" value="{{ item.id }}"/>
+     <input type="submit" value="Update review"/>
   </form>
 </body>
 

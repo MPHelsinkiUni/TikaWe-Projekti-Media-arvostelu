@@ -27,14 +27,25 @@
 
 
   <!-- The following will be the actual movie review feature. -->
-  {% if session.username %}
   <p>
-    <a href = "/review_paper">Place new review</a>
-  </p>
-
-  <!-- The following shows an excerpt of review from the database -->
+  {% if session.username %}
+    <a href="/review_paper">Place new review</a>
   {% endif %}
-
+  </br>
+  <!-- The following will be the search feature. -->
+  <a href="/search_review">Search reviews</a>
+  
+  </p>
+  <!-- The following shows an excerpt of review from the database -->
+  <h2>
+    Latest reviews
+  </h2>
+  <ul>
+    {% for item in items %}
+    <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
+    {% endfor %}
+  </ul>
+  
 
 
 </body>

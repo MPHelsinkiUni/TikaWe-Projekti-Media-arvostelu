@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{ item.title }}</title>
+</head>
+
+<body>
+  <h1>{{ item.title }}</h1>
+
+  {% if session.user_id == item.user_id %}
+  <p>
+    <a href = "/edit_review/{{ item.id }}">Modify entry</a>
+    <a href = "/remove_review/{{ item.id }}">Remove entry</a>
+  </p>
+  {% endif %}
+
+  <p>
+    Review: </br>
+    {{ item.review_body }}
+  </p>
+  <p>
+    Writer: {{ item.poster }}
+  </p>
+  <p>
+    Stars: {{ item.stars }}
+  </p>
+  <p>
+    Work reviewed: {{ item.work }}
+  </p>
+  <p>
+    Time posted: {{ item.time_posted }}
+  </p>
+  <p>
+    IMDb link: {{ item.imdb_snippet }}
+  </p>
+  <p>
+    <a href = "/"> Return to main page</a>
+  </p>
+</body>
+
+</html>
