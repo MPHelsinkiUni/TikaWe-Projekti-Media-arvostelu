@@ -100,3 +100,5 @@ Currently the files have merely being tested using course material. This is the 
 In preparation for implementing the review system, the database has been massively expanded, with missing components and added redundancy. Page for adding those reviews have been prepared but function is not ready.
 ## 27.3.2026
 The login and post system is ... "functional". The database, however, still requires referneces, indexing and other touchups. The decision was made to split up the image implementation of the database into multiple separate tables to enable easy referencing and image implementation into other components of the database.
+## 29.3.2026
+All base systems are functional. References have been commented out until the implementation can be "locked down". Indexing is functional. SQL injection is no longer an attack vector ... though far more simple attack vectors are possible since these reviews are identified by their id and there is no direct forbid protocol for users manually entering the edit pages of HTML links corresponding to the reviews themselves. This will have to be solved later, as well as many other UX related issues.
