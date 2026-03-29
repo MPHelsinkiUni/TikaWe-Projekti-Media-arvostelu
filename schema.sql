@@ -10,6 +10,8 @@ CREATE TABLE users (
 CREATE TABLE images_users (
     id INTEGER PRIMARY KEY,
     image_file IMAGE
+    -- References have been commented out till further notice due to debugging difficulties.
+    -- FOREIGN KEY (image_file) REFERENCES reviews (thumbnail) ON DELETE CASCADE
 );
 
 CREATE TABLE reviews (
@@ -24,10 +26,19 @@ CREATE TABLE reviews (
     time_posted TIMESTAMP NOT NULL DEFAULT NOW, -- Not needed
     imdb_snippet VARCHAR(255) NOT NULL, -- Important, input done
     image_file IMAGE -- No implementation yet.
+
+    -- References have been commented out till further notice due to debugging difficulties.
+    -- FOREIGN KEY (poster) REFERENCES users (username) ON DELETE SET NULL,
+    -- FOREIGN KEY (poster_id) REFERENCES users (id) ON DELETE SET NULL,
+    -- FOREIGN KEY (work) REFERENCES works (work_name) ON DELETE SET NULL,
+    -- FOREIGN KEY (work_id) REFERENCES works (id) ON DELETE SET NULL,
+    -- FOREIGN KEY (imdb_snippet) REFERENCES works (imdb_snippet) ON DELETE SET NULL
 );
 CREATE TABLE images_reviews (
     id INTEGER PRIMARY KEY,
     image_file IMAGE
+    -- References have been commented out till further notice due to debugging difficulties.
+    -- FOREIGN KEY (image_file) REFERENCES reviews (image_file) ON DELETE CASCADE
 );
 -- No implementation yet. Will be done later WIP!!!
 
@@ -44,6 +55,8 @@ CREATE TABLE works (
 CREATE TABLE images_works (
     id INTEGER PRIMARY KEY,
     image_file IMAGE
+    -- References have been commented out till further notice due to debugging difficulties.
+    -- FOREIGN KEY (image_file) REFERENCES works (picture) ON DELETE CASCADE
 );
 
 -- Above, the works section should be expanded upon with descriptions and others for a later time.
@@ -57,6 +70,11 @@ CREATE TABLE comments (
     review_root_title VARCHAR(255) NOT NULL,
     review_id INTEGER NOT NULL,
     time_posted TIMESTAMP NOT NULL DEFAULT NOW
+    -- References have been commented out till further notice due to debugging difficulties.
+    -- FOREIGN KEY (writer) REFERENCES users (username) ON DELETE SET NULL,
+    -- FOREIGN KEY (writer_id) REFERENCES users (id) ON DELETE SET NULL,
+    -- FOREIGN KEY (review_root_title) REFERENCES reviews (title) ON DELETE SET NULL, 
+    -- FOREIGN KEY (review_id) REFERENCES reviews (id) ON DELETE SET NULL
 );
 
 -- Comments will not have pictures at all. They will not be directly referenced.
@@ -65,21 +83,3 @@ CREATE TABLE comments (
 CREATE UNIQUE INDEX idx_time ON users (created_at, username);
 CREATE UNIQUE INDEX idx_works ON works (work_name);
 CREATE UNIQUE INDEX idx_comments ON comments (id);
-
--- Referencing for images.
-ALTER TABLE images_works ADD FOREIGN KEY (image_file) REFERENCES works (picture) ON DELETE CASCADE;
-ALTER TABLE images_reviews ADD FOREIGN KEY (image_file) REFERENCES reviews (image_file) ON DELETE CASCADE;
-ALTER TABLE images_users ADD FOREIGN KEY (image_file) REFERENCES reviews (thumbnail) ON DELETE CASCADE;
--- Referencing for reviews.
-ALTER TABLE reviews ADD FOREIGN KEY (poster) REFERENCES users (username) ON DELETE SET NULL;
-ALTER TABLE reviews ADD FOREIGN KEY (poster_id) REFERENCES users (id) ON DELETE SET NULL;
-ALTER TABLE reviews ADD FOREIGN KEY (work) REFERENCES works (work_name) ON DELETE SET NULL;
-ALTER TABLE reviews ADD FOREIGN KEY (work_id) REFERENCES works (id) ON DELETE SET NULL;
-ALTER TABLE reviews ADD FOREIGN KEY (imdb_snippet) REFERENCES works (imdb_snippet) ON DELETE SET NULL;
--- Referencing for comments.
-ALTER TABLE comments ADD FOREIGN KEY (writer) REFERENCES users (username) ON DELETE SET NULL;
-ALTER TABLE comments ADD FOREIGN KEY (writer_id) REFERENCES users (id) ON DELETE SET NULL;
-ALTER TABLE comments ADD FOREIGN KEY (review_root_title) REFERENCES reviews (title) ON DELETE SET NULL;
-ALTER TABLE comments ADD FOREIGN KEY (review_id) REFERENCES reviews (id) ON DELETE SET NULL;
-
-

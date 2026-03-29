@@ -25,26 +25,18 @@
   </p>
   {% endif %}
 
-  <p>{{ message }}</p>
-  <ul>
-    {% for item in items %}
-    <li>{{ item }}</li>
-    {% endfor %}
-  </ul>
-
-
-  <form action="/result" method="post">
-    <p>
-      Anna viesti:
-      <input type="text" name="message" />
-    </p>
-    <input type="submit" value="Lähetä" />
-  </form>
 
   <!-- The following will be the actual movie review feature. -->
+  {% if session.username %}
   <p>
     <a href = "/review_paper">Place new review</a>
   </p>
+
+  <!-- The following shows an excerpt of review from the database -->
+  {% endif %}
+
+
+
 </body>
 
 </html>

@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
 import db
 import config
+import items
 
 app = Flask(__name__, template_folder ='./templates')
 app.secret_key = config.secret_key
@@ -98,9 +99,8 @@ def insert_review():
     stars = int(request.form["stars"])
     work = request.form["work"]
     imdb_snippet = request.form["imdb_snippet"]
-    sql = """INSERT INTO reviews (title, poster, poster_id, review_body, stars, work, imdb_snippet) VALUES (?, ?, ?, ?, ?, ?, ?)"""
-    
-    db.execute(sql, [title, username, user_id, review_body, stars, work, imdb_snippet])
+
+    items.add_item(title, username, user_id, review_body, stars, work, imdb_snippet)
 
     return redirect("/")
 
