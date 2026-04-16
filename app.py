@@ -17,6 +17,8 @@ def index():
 @app.route("/item/<int:item_id>")
 def show_item(item_id):
     item = items.get_item(item_id)
+    if not item:
+        abort(404)
     return render_template("review_data.html", item=item)
 
 @app.route("/register")
@@ -39,6 +41,14 @@ def create():
         return "Warning: Your username has already been chosen. Please pick another one."
 
     return render_template("registration_success.html")
+##################
+# This seciton manages repetitive code
+
+def sanity_check(item):
+    if not item:
+        abort(404)
+    if item["user_id"] != session["user_id"]:
+        abort(403)
 
 ###################
 # This section manages logins, and logouts
@@ -113,8 +123,7 @@ def edit_review_auxiliary():
     # imdb_snippet -> imdb_snippet
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
-    if item["user_id"] != session["user_id"]:
-        abort(403)
+    sanity_check(item)
     title = request.form["title"]
     review_body = request.form["review_body"]
     stars = int(request.form["stars"])
@@ -128,18 +137,13 @@ def edit_review_auxiliary():
 @app.route("/edit_review/<int:item_id>")
 def edit_review(item_id):
     item = items.get_item(item_id)
-
-    if item["user_id"] != session["user_id"]:
-        abort(403)
-
+    sanity_check(item)
     return render_template("edit_review.html", item=item)
 
 @app.route("/remove_review/<int:item_id>", methods=["GET", "POST"])
 def remove_review(item_id):
     item = items.get_item(item_id)
-    if item["user_id"] != session["user_id"]:
-        abort(403)
-        
+    sanity_check(item)
     if request.method == "GET":
         item = items.get_item(item_id)
         return render_template("remove_review.html", item=item)

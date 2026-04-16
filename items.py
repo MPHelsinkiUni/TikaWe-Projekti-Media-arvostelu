@@ -29,7 +29,11 @@ def get_item(item_id):
              FROM reviews, users
              WHERE reviews.poster_id = users.id AND
                    reviews.id = ?"""
-    return db.query(sql, [item_id])[0]
+    result = db.query(sql, [item_id])
+    if result:
+        return result[0]
+    else:
+        return None
 
 def update_item(item_id, title, review_body, stars, work, imdb_snippet):
     sql = """UPDATE reviews SET title = ?,
