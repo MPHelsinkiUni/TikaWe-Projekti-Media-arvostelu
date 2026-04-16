@@ -112,14 +112,9 @@ def edit_review_auxiliary():
     # work_id snippet will be worked on later. (WIP!!!)
     # imdb_snippet -> imdb_snippet
     item_id = request.form["item_id"]
-    
     item = items.get_item(item_id)
-    try: 
-        if item["user_id"] != session["user_id"]:
-            abort(403)
-    except:
+    if item["user_id"] != session["user_id"]:
         abort(403)
-        
     title = request.form["title"]
     review_body = request.form["review_body"]
     stars = int(request.form["stars"])
