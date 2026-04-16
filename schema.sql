@@ -1,10 +1,10 @@
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
-    username VARCHAR(255) UNIQUE,
-    password_hash VARCHAR(255),
-    assignment_role VARCHAR(255) DEFAULT "user",
+    username TEXT UNIQUE,
+    password_hash TEXT,
+    assignment_role TEXT DEFAULT "user",
     created_at TIMESTAMP NOT NULL DEFAULT NOW,
-    favourites VARCHAR(65535),
+    favourites TEXT,
     thumbnail IMAGE
 );
 CREATE TABLE images_users (
@@ -16,15 +16,15 @@ CREATE TABLE images_users (
 
 CREATE TABLE reviews (
     id INTEGER PRIMARY KEY, 
-    title VARCHAR(255) NOT NULL, -- Input done
-    poster VARCHAR(255) NOT NULL, -- Automatic
+    title TEXT NOT NULL, -- Input done
+    poster TEXT NOT NULL, -- Automatic
     poster_id INTEGER NOT NULL, -- Automatic
-    review_body VARCHAR(65535), -- Input done
+    review_body TEXT, -- Input done
     stars INTEGER, -- Input done, type radio.
-    work VARCHAR(255) NOT NULL,  -- Input done
+    work TEXT NOT NULL,  -- Input done
     work_id INTEGER, -- Automatic, will be done later. Set as null allowed for now.
     time_posted TIMESTAMP NOT NULL DEFAULT NOW, -- Not needed
-    imdb_snippet VARCHAR(255) NOT NULL, -- Important, input done
+    imdb_snippet TEXT NOT NULL, -- Important, input done
     image_file IMAGE -- No implementation yet.
 
     -- References have been commented out till further notice due to debugging difficulties.
@@ -44,10 +44,10 @@ CREATE TABLE images_reviews (
 
 CREATE TABLE works (
     id INTEGER PRIMARY KEY, 
-    work_name VARCHAR(255) NOT NULL,
-    genre VARCHAR(255),
+    work_name TEXT NOT NULL,
+    genre TEXT,
     picture IMAGE, 
-    imdb_snippet VARCHAR(255) NOT NULL,
+    imdb_snippet TEXT NOT NULL,
     year_of_release INTEGER,
     month_of_release INTEGER,
     day_of_release INTEGER
@@ -64,10 +64,10 @@ CREATE TABLE images_works (
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     comment_title TEXT NOT NULL,
-    body VARCHAR(65535) NOT NULL,
-    writer VARCHAR(255) NOT NULL,
+    body TEXT NOT NULL,
+    writer TEXT NOT NULL,
     writer_id INTEGER NOT NULL,
-    review_root_title VARCHAR(255) NOT NULL,
+    review_root_title TEXT NOT NULL,
     review_id INTEGER NOT NULL,
     time_posted TIMESTAMP NOT NULL DEFAULT NOW
     -- References have been commented out till further notice due to debugging difficulties.

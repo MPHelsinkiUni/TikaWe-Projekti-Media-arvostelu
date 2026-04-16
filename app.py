@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import abort, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
@@ -18,14 +18,6 @@ def index():
 def show_item(item_id):
     item = items.get_item(item_id)
     return render_template("review_data.html", item=item)
-
-@app.route("/page1")
-def page1():
-    return "Tämä on sivu 1"
-
-@app.route("/page2")
-def page2():
-    return "Tämä on sivu 2"
 
 @app.route("/register")
 def register():
@@ -120,6 +112,14 @@ def edit_review_auxiliary():
     # work_id snippet will be worked on later. (WIP!!!)
     # imdb_snippet -> imdb_snippet
     item_id = request.form["item_id"]
+    
+    item = items.get_item(item_id)
+    try: 
+        if item["user_id"] != session["user_id"]:
+            abort(403)
+    except:
+        abort(403)
+        
     title = request.form["title"]
     review_body = request.form["review_body"]
     stars = int(request.form["stars"])
@@ -133,10 +133,18 @@ def edit_review_auxiliary():
 @app.route("/edit_review/<int:item_id>")
 def edit_review(item_id):
     item = items.get_item(item_id)
+
+    if item["user_id"] != session["user_id"]:
+        abort(403)
+
     return render_template("edit_review.html", item=item)
 
 @app.route("/remove_review/<int:item_id>", methods=["GET", "POST"])
 def remove_review(item_id):
+    item = items.get_item(item_id)
+    if item["user_id"] != session["user_id"]:
+        abort(403)
+        
     if request.method == "GET":
         item = items.get_item(item_id)
         return render_template("remove_review.html", item=item)
