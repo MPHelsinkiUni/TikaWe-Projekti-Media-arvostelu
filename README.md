@@ -104,3 +104,5 @@ The login and post system is ... "functional". The database, however, still requ
 All base systems are functional. References have been commented out until the implementation can be "locked down". Indexing is functional. SQL injection is no longer an attack vector ... though far more simple attack vectors are possible since these reviews are identified by their id and there is no direct forbid protocol for users manually entering the edit pages of HTML links corresponding to the reviews themselves. This will have to be solved later, as well as many other UX related issues.
 ## 16.4.2026
 After an extended break, I patched up some cybersecurity related access issues with reviews by enforcing id checks for every function sending something to the database. 
+## 17.4.2026
+Profile pages, classification systems have been added, with database changes and backend users.py and items.py changes to boot. In addition to this change, I have congealed as many repetitive sequences of code as possible into its own separate sections - sanity check, kill anons, kill spaghetti inputs, ghostbust and yeet empty variable. Further changes pending.
