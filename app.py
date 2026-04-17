@@ -41,13 +41,24 @@ def create():
         return "Warning: Your username has already been chosen. Please pick another one."
 
     return render_template("registration_success.html")
-##################
-# This seciton manages repetitive code
 
-def sanity_check(item):
+##################
+# This section manages repetitive code
+
+def sanity_check(item): # Check data integrity and prevent unauthorised access
     if not item:
         abort(404)
     if item["user_id"] != session["user_id"]:
+        abort(403)
+
+def kill_anons(): # No user_id => no access
+    if "user_id" not in session:
+        abort(403)
+
+def kill_bad_inputs(input, upper_length, lower_length):
+    if not input or len(input) > upper_length:
+        abort(403)
+    if not input or len(input) < lower_length:
         abort(403)
 
 ###################
@@ -77,6 +88,7 @@ def login():
 
 @app.route("/logout")
 def logout():
+    kill_anons()
     del session["user_id"]
     del session["username"]
     return redirect("/")
@@ -85,10 +97,12 @@ def logout():
 # This section manages the addition of new reviews themselves.
 @app.route("/review_paper")
 def new_review():
+    kill_anons()
     return render_template("review_paper.html")
 
 @app.route("/create_review", methods = ["POST"])
 def insert_review():
+    kill_anons()
     # Input names are: title, review_body, stars, work, imdb_snippet (in HTML page). Linked as such
     # title -> title
     # session.username -> poster
@@ -106,12 +120,18 @@ def insert_review():
     work = request.form["work"]
     imdb_snippet = request.form["imdb_snippet"]
 
+    kill_bad_inputs(title, 255, 1)
+    kill_bad_inputs(review_body, 5000, 1)
+    kill_bad_inputs(work, 255, 1)
+    kill_bad_inputs(imdb_snippet, 255, 3)
+
     items.add_item(title, username, user_id, review_body, stars, work, imdb_snippet)
 
     return redirect("/")
 
 @app.route("/edit_review", methods = ["POST"])
 def edit_review_auxiliary():
+    kill_anons()
     # Input names are: title, review_body, stars, work, imdb_snippet (in HTML page). Linked as such
     # title -> title
     # session.username -> poster
@@ -136,12 +156,14 @@ def edit_review_auxiliary():
 
 @app.route("/edit_review/<int:item_id>")
 def edit_review(item_id):
+    kill_anons()
     item = items.get_item(item_id)
     sanity_check(item)
     return render_template("edit_review.html", item=item)
 
 @app.route("/remove_review/<int:item_id>", methods=["GET", "POST"])
 def remove_review(item_id):
+    kill_anons()
     item = items.get_item(item_id)
     sanity_check(item)
     if request.method == "GET":
