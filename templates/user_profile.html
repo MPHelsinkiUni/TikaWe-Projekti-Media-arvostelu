@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Profile: {{ user.username }}!</title>
+</head>
+
+<body>
+  <h1>Welcome, {{ user.username }}!</h1>
+  <p>ID: {{ user.user_id }}</p>
+  
+  <p>
+    You have posted {{ entries | count }} review(s).
+  </p>
+
+  <h2>Reviews</h2>
+  <ul>
+    {% for entry in entries %}
+    <li><a href="/item/{{ entry.id }}">{{ entry.title }}</a></li>
+    {% endfor %}
+  </ul>
+  <p>
+    <a href = "/"> Return to main page</a>
+  </p>
+</body>
+
+</html>

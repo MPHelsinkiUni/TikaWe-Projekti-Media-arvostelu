@@ -1,10 +1,11 @@
 import sqlite3
 from flask import Flask
 from flask import abort, redirect, render_template, request, session
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 import db
 import config
 import items
+import users
 
 app = Flask(__name__, template_folder ='./templates')
 app.secret_key = config.secret_key
@@ -12,14 +13,14 @@ app.secret_key = config.secret_key
 @app.route("/") # Root
 def index():
     reviews = items.get_items()
-    return render_template("index.html", message = "Welcome to film review site!", items = reviews)
+    return render_template("index.html", message = "Welcome to film review site!", items=reviews)
 
 @app.route("/item/<int:item_id>")
 def show_item(item_id):
     item = items.get_item(item_id)
-    if not item:
-        abort(404)
-    return render_template("review_data.html", item=item)
+    yeet_empty_variable(item)
+    classes = items.get_classes(item_id)
+    return render_template("review_data.html", item=item, classes=classes)
 
 @app.route("/register")
 def register():
@@ -32,15 +33,14 @@ def create():
     password2 = request.form["password2"]
     if password1 != password2:
         return "Warning: Passwords were not the same. Please double check your inputs"
-    password_hash = generate_password_hash(password1)
-
+    
     try:
-        sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-        db.execute(sql, [username, password_hash])
+        users.create_user(username, password1)
     except sqlite3.IntegrityError:
         return "Warning: Your username has already been chosen. Please pick another one."
 
     return render_template("registration_success.html")
+
 
 ##################
 # This section manages repetitive code
@@ -55,11 +55,19 @@ def kill_anons(): # No user_id => no access
     if "user_id" not in session:
         abort(403)
 
-def kill_bad_inputs(input, upper_length, lower_length):
-    if not input or len(input) > upper_length:
+def kill_spaghetti(input, upper_length, lower_length):
+    if len(input) > upper_length:
         abort(403)
-    if not input or len(input) < lower_length:
+    if len(input) < lower_length:
         abort(403)
+
+def ghostbust(user):
+    if not user:
+        abort(404)
+
+def yeet_empty_variable(item):
+    if not item:
+        abort(404)
 
 ###################
 # This section manages logins, and logouts
@@ -74,12 +82,8 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         
-        sql = "SELECT id, password_hash FROM users WHERE username = ?"
-        result = db.query(sql, [username])[0]
-        user_id = result["id"]
-        password_hash = result["password_hash"]
-
-        if check_password_hash(password_hash, password):
+        user_id = users.verify_user(username, password)
+        if user_id:
             session["user_id"] = user_id
             session["username"] = username
             return redirect("/")
@@ -120,12 +124,22 @@ def insert_review():
     work = request.form["work"]
     imdb_snippet = request.form["imdb_snippet"]
 
-    kill_bad_inputs(title, 255, 1)
-    kill_bad_inputs(review_body, 5000, 1)
-    kill_bad_inputs(work, 255, 1)
-    kill_bad_inputs(imdb_snippet, 255, 3)
+    kill_spaghetti(title, 255, 1)
+    kill_spaghetti(review_body, 5000, 1)
+    kill_spaghetti(work, 255, 1)
+    kill_spaghetti(imdb_snippet, 255, 3)
 
-    items.add_item(title, username, user_id, review_body, stars, work, imdb_snippet)
+    genre = request.form["genre"]
+    medium = request.form["medium"]
+
+    classes = []
+    if genre:
+        classes.append(("Genre", genre))
+    if medium:
+        classes.append(("Medium", medium))
+
+
+    items.add_item(title, username, user_id, review_body, stars, work, imdb_snippet, classes)
 
     return redirect("/")
 
@@ -188,6 +202,15 @@ def search_review():
         query = ""
         results = []
     return render_template("search_review.html", query=query, results=results)
+####################
+# This section manages user profiling
+@app.route("/user/<int:user_id>")
+def user_profile(user_id):
+    user = users.get_user(user_id)
+    ghostbust(user)
+    entries = items.get_items_by_user(user_id)
+    return render_template("user_profile.html", user=user, entries=entries)
+    
 
 # Check on 127.0.0.1:5000 or localhost:5000
 # Procedure: `source ./venv/bin/activate` -> `flask run` -> check -> CTRL+C -> `deactivate`

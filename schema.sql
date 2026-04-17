@@ -10,9 +10,10 @@ CREATE TABLE users (
 CREATE TABLE images_users (
     id INTEGER PRIMARY KEY,
     image_file IMAGE
+);
     -- References have been commented out till further notice due to debugging difficulties.
     -- FOREIGN KEY (image_file) REFERENCES reviews (thumbnail) ON DELETE CASCADE
-);
+
 
 CREATE TABLE reviews (
     id INTEGER PRIMARY KEY, 
@@ -26,7 +27,6 @@ CREATE TABLE reviews (
     time_posted TIMESTAMP NOT NULL DEFAULT NOW, -- Not needed
     imdb_snippet TEXT NOT NULL, -- Important, input done
     image_file IMAGE -- No implementation yet.
-
     -- References have been commented out till further notice due to debugging difficulties.
     -- FOREIGN KEY (poster) REFERENCES users (username) ON DELETE SET NULL,
     -- FOREIGN KEY (poster_id) REFERENCES users (id) ON DELETE SET NULL,
@@ -34,6 +34,15 @@ CREATE TABLE reviews (
     -- FOREIGN KEY (work_id) REFERENCES works (id) ON DELETE SET NULL,
     -- FOREIGN KEY (imdb_snippet) REFERENCES works (imdb_snippet) ON DELETE SET NULL
 );
+
+ -- This will have a rather large list and I will use Wikipedia standardisation for options. References be damned for now.
+CREATE TABLE categorisation (
+    id INTEGER PRIMARY KEY,
+    review_id INTEGER REFERENCES reviews,
+    title TEXT,
+    value TEXT
+);
+
 CREATE TABLE images_reviews (
     id INTEGER PRIMARY KEY,
     image_file IMAGE

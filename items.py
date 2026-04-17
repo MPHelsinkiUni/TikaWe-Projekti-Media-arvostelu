@@ -1,15 +1,23 @@
 import db
 import datetime
 
-def add_item(title, username, user_id, review_body, stars, work, imdb_snippet):
+def add_item(title, username, user_id, review_body, stars, work, imdb_snippet, classes):
+    # TABLE review
     sql = """INSERT INTO reviews (title, poster, poster_id, review_body, stars, work, time_posted, imdb_snippet) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
     time_posted = datetime.datetime.now()
-    
     db.execute(sql, [title, username, user_id, review_body, stars, work, time_posted, imdb_snippet])
 
+    # Extract last inserted id
+    item_id = db.last_insert_id()
+
+    # TABLE categorisation
+    sql = """INSERT INTO categorisation (review_id, title, value) VALUES (?, ?, ?)"""
+    for title, value in classes:
+        db.execute(sql, [item_id, title, value])
+
 def get_items():
-    sql = """SELECT id, title, poster, stars, imdb_snippet FROM reviews ORDER BY time_posted DESC LIMIT 5"""
+    sql = """SELECT id, title, poster, poster_id, stars, imdb_snippet FROM reviews ORDER BY time_posted DESC LIMIT 5"""
     return db.query(sql)
     # Ideally, there should be work as well, but for the purposes of debugging, we do not do this.
 
@@ -34,6 +42,10 @@ def get_item(item_id):
         return result[0]
     else:
         return None
+    
+def get_items_by_user(user_id):
+    sql = """SELECT id, title FROM reviews WHERE id = ? ORDER BY id DESC"""
+    return db.query(sql, [user_id])
 
 def update_item(item_id, title, review_body, stars, work, imdb_snippet):
     sql = """UPDATE reviews SET title = ?,
@@ -55,3 +67,7 @@ def search_review(query):
              ORDER BY time_posted DESC"""
     x = "%" + query + "%"
     return db.query(sql, [x, x])
+
+def get_classes(item_id):
+    sql = """SELECT title, value FROM categorisation WHERE review_id = ?"""
+    return db.query(sql, [item_id])

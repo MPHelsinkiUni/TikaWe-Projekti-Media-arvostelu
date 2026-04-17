@@ -29,8 +29,8 @@
           type="text" 
           name="review_body"
           rows="8"
-          cols="60">
-         </textarea>
+          cols="60"
+          required></textarea>
      </p>
 
     <!-- Pick the score from 0 to 5. Nothing means unranked. Can be null-->
@@ -53,20 +53,66 @@
           type="text" 
           name="work"
           minlength="1"
-          maxlength="255"/>
+          maxlength="255"
+          required/>
      </p>
 
      <!-- IMDb work snippet-->
      <p>
-         IMDb links: <br/>
+         Link to work page: <br/>
          <input 
           type="text" 
           name="imdb_snippet"
           minlength="3"
-          maxlength="255"/>
+          maxlength="255"
+          required/>
      </p>
-     <input type="submit" value="Submit review"/>
 
+     <!-- Classification of the work - https://en.wikipedia.org/wiki/List_of_genres-->
+      <p>
+         Genre of work: <br/>
+         <select name="genre">
+           <option value="">(select)</option>
+           <option value="action">Action</option>
+           <option value="adventure">Adventure</option>
+           <option value="comedy">Comedy</option>
+           <option value="crime">Crime</option>
+           <option value="mystery">Mystery</option>
+           <option value="thriller">Thriller</option>
+           <option value="fantasy">Fantasy</option>
+           <option value="scifi">Science fiction</option>
+           <option value="historical">Historical</option>
+           <option value="horror">Horror</option>
+           <option value="romance">Romance</option>
+           <option value="satire">Satire</option>
+           <option value="drama">Drama</option>
+           <option value="animation">Animation</option>
+         </select>
+         <br/><br/>
+         Note that genre separations are necessarily imperfect. Pick the one that fits your conception of the work at hand.
+      </p>
+
+      <p>
+         Medium: <br/>
+         <select name="medium">
+           <option value="">(select)</option>
+           <option value="book">Book</option>
+           <option value="comics">Comics</option>
+           <option value="tv">TV series</option>
+           <option value="movies">Movies</option>
+           <option value="games">Games</option>
+           <option value="theatre">Theatre</option>
+           <option value="radio">Radio</option>
+           <option value="podcast">Podcast</option>
+           <option value="audio">Audio drama</option>
+           <option value="music">Music</option>
+         </select>
+         <br/><br/>
+         Note that genre separations are necessarily imperfect. Pick the one that fits your conception of the work at hand.
+      </p>
+
+     <input type="reset" value="Clear page and redo"/>
+     <input type="submit" value="Submit review"/>
   </form>
 </body>
 
