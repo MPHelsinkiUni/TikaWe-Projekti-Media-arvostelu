@@ -13,7 +13,7 @@
 
   {% if session.username %}
   <p>
-    Hello, {{ session.username }}
+    Hello, <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
   </p>
   <p>
     <a href="/logout">Sign out</a>

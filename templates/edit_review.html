@@ -67,47 +67,27 @@
      </p>
 
      <!-- Classification of the work - https://en.wikipedia.org/wiki/List_of_genres-->
+      {% for class in all_classes %}
       <p>
-         Genre of work: <br/>
-         <select name="genre">
-           <option value="">(select)</option>
-           <option value="action">Action</option>
-           <option value="adventure">Adventure</option>
-           <option value="comedy">Comedy</option>
-           <option value="crime">Crime</option>
-           <option value="mystery">Mystery</option>
-           <option value="thriller">Thriller</option>
-           <option value="fantasy">Fantasy</option>
-           <option value="scifi">Science fiction</option>
-           <option value="historical">Historical</option>
-           <option value="horror">Horror</option>
-           <option value="romance">Romance</option>
-           <option value="satire">Satire</option>
-           <option value="drama">Drama</option>
-           <option value="animation">Animation</option>
-         </select>
-         <br/><br/>
-         Note that genre separations are necessarily imperfect. Pick the one that fits your conception of the work at hand.
+        
+        {{ class }}: <br/>
+
+        <select name="classes">
+          <option value="">(select)</option>
+          {% for option in all_classes[class] %}
+          {% if classes[class] == option %}
+          <option value="{{ class }}:{{ option }}" selected>{{ option }}</option>
+          {% else %}
+          <option value="{{ class }}:{{ option }}">{{ option }}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+      </p>
+      {% endfor %}
+
+      Note that genre separations are necessarily imperfect. Pick the one that fits your conception of the work at hand.
       </p>
 
-      <p>
-         Medium: <br/>
-         <select name="medium">
-           <option value="">(select)</option>
-           <option value="book">Book</option>
-           <option value="tv">TV series</option>
-           <option value="comics">Comics</option>
-           <option value="movies">Movies</option>
-           <option value="games">Games</option>
-           <option value="theatre">Theatre</option>
-           <option value="radio">Radio</option>
-           <option value="podcast">Podcast</option>
-           <option value="audio">Audio drama</option>
-           <option value="music">Music</option>
-         </select>
-         <br/><br/>
-         Note that genre separations are necessarily imperfect. Pick the one that fits your conception of the work at hand.
-      </p>
       
      <input type="hidden" name="item_id" value="{{ item.id }}"/>
      <input type="submit" value="Update review"/>

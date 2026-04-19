@@ -6,6 +6,7 @@
 </head>
 
 <body>
+  <!-- INFORMATION-->
   <h1>{{ item.title }}</h1>
 
   {% if session.user_id == item.user_id %}
@@ -44,6 +45,34 @@
     </ul>
   </p>
   {% endif %}
+
+  <!-- COMMENTS -->
+  <h2>Comments</h2>
+  {% for comment in comments %}
+  <li>
+    <h3>{{ comment.comment_title}}</h3>
+    Writer: <a href="/user/{{ comment.writer_id }}">{{ comment.writer }}</a><br/>
+    Time posted: {{ comment.time_posted }}<br/>
+    Body: <br/>
+    {{comment.body}}
+  </li>
+
+  {% endfor %}
+  <h2>New comment</h2>
+    <form action="/new_comment" method="post">
+      Comment: <br/>
+      Title: <br/>
+      <input type="text" name="title" required/></br>
+      Body: <br/>
+      <textarea type="text" name="review_body" rows="8" cols="60" required></textarea><br/>
+
+
+      <input type="hidden" name="review_id" value="{{ item.id }}"/>
+      <input type="hidden" name="review_title" value="{{ item.title }}"/>
+
+      <input type="submit" name="Comment"/>
+    </form>
+    
   <p>
     <a href = "/"> Return to main page</a>
   </p>

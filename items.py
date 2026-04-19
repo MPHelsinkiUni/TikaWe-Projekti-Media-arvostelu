@@ -47,7 +47,7 @@ def get_items_by_user(user_id):
     sql = """SELECT id, title FROM reviews WHERE id = ? ORDER BY id DESC"""
     return db.query(sql, [user_id])
 
-def update_item(item_id, title, review_body, stars, work, imdb_snippet):
+def update_item(item_id, title, review_body, stars, work, imdb_snippet, classes):
     sql = """UPDATE reviews SET title = ?,
                                 review_body = ?,
                                 stars = ?,
@@ -55,6 +55,14 @@ def update_item(item_id, title, review_body, stars, work, imdb_snippet):
                                 imdb_snippet = ?
                             WHERE id = ?"""
     db.execute(sql, [title, review_body, stars, work, imdb_snippet, item_id])
+
+    sql = """DELETE FROM categorisation WHERE item_id = ?"""
+    db.execute(sql, [item_id])
+
+    # TABLE categorisation
+    sql = """INSERT INTO categorisation (review_id, title, value) VALUES (?, ?, ?)"""
+    for title, value in classes:
+        db.execute(sql, [item_id, title, value])
 
 def remove_item(item_id):
     sql = """DELETE FROM reviews WHERE id = ?"""
@@ -70,4 +78,27 @@ def search_review(query):
 
 def get_classes(item_id):
     sql = """SELECT title, value FROM categorisation WHERE review_id = ?"""
+    return db.query(sql, [item_id])
+
+def get_all_classes():
+    sql = """SELECT title, value FROM class ORDER BY id"""
+    classes = db.query(sql)
+
+    classdict = {}
+    for title, value in classes:
+        classdict[title] = []
+    for title, value in classes:
+        classdict[title].append(value)
+
+    return classdict
+
+def add_comment(title, comment_body, username, user_id, root_id, root_title):
+    sql = """INSERT INTO comments 
+            (comment_title, body, writer, writer_id, review_root_title, review_id, time_posted) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)"""
+    time_posted = datetime.datetime.now()
+    db.execute(sql, [title, comment_body, username, user_id, root_title, root_id, time_posted])
+
+def get_comments(item_id):
+    sql = """SELECT comment_title, body, writer, time_posted FROM comments WHERE review_id = ? ORDER BY time_posted DESC"""
     return db.query(sql, [item_id])
