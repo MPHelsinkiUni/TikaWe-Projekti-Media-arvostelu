@@ -6,6 +6,7 @@
 </head>
 
 <body>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <h1>Media4U</h1>
   <p>
     <b>Welcome to the</b> <i>media review site</i>!
@@ -46,8 +47,6 @@
     <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
     {% endfor %}
   </ul>
-  
-
 
 </body>
 

@@ -106,3 +106,7 @@ All base systems are functional. References have been commented out until the im
 After an extended break, I patched up some cybersecurity related access issues with reviews by enforcing id checks for every function sending something to the database. 
 ## 17.4.2026
 Profile pages, classification systems have been added, with database changes and backend users.py and items.py changes to boot. In addition to this change, I have congealed as many repetitive sequences of code as possible into its own separate sections - sanity check, kill anons, kill spaghetti inputs, ghostbust and yeet empty variable. Further changes pending.
+## 27.4.2026
+Renamed repetitive code sections into more professional names. Enforced CSRF check on all database-interacting functions. Removed a misspelling. Removed unnecessary import lines and comments. References have been fully uncommented and usable.
+## 2.5.2026
+Fixed CSRF check issues. Trimmed unnecessary code and cleaned up implementation of certain seek functions. Implemented image insertions for reviews and users separately and with separate tables

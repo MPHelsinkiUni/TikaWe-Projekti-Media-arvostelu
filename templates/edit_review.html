@@ -5,7 +5,7 @@
   <title>Edit review</title>
 </head>
 
-<body>
+<body>   
   <h1>Edit review</h1>
   <form action="/edit_review" method="post">
 
@@ -89,9 +89,11 @@
       </p>
 
       
+     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
      <input type="hidden" name="item_id" value="{{ item.id }}"/>
      <input type="submit" value="Update review"/>
   </form>
+  
 </body>
 
 </html>

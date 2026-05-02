@@ -1,6 +1,9 @@
 import db
 import datetime
 
+####################
+# This seciton handles backend functions of review retrieval.
+
 def add_item(title, username, user_id, review_body, stars, work, imdb_snippet, classes):
     # TABLE review
     sql = """INSERT INTO reviews (title, poster, poster_id, review_body, stars, work, time_posted, imdb_snippet) 
@@ -76,6 +79,8 @@ def search_review(query):
     x = "%" + query + "%"
     return db.query(sql, [x, x])
 
+####################
+# This section manages class retrieval
 def get_classes(item_id):
     sql = """SELECT title, value FROM categorisation WHERE review_id = ?"""
     return db.query(sql, [item_id])
@@ -92,6 +97,8 @@ def get_all_classes():
 
     return classdict
 
+####################
+# This section manages comments
 def add_comment(title, comment_body, username, user_id, root_id, root_title):
     sql = """INSERT INTO comments 
             (comment_title, body, writer, writer_id, review_root_title, review_id, time_posted) 
@@ -100,5 +107,23 @@ def add_comment(title, comment_body, username, user_id, root_id, root_title):
     db.execute(sql, [title, comment_body, username, user_id, root_title, root_id, time_posted])
 
 def get_comments(item_id):
-    sql = """SELECT comment_title, body, writer, time_posted FROM comments WHERE review_id = ? ORDER BY time_posted DESC"""
+    sql = """SELECT comment_title, body, writer, writer_id, time_posted FROM comments WHERE review_id = ? ORDER BY time_posted DESC"""
     return db.query(sql, [item_id])
+
+####################
+# This section manages images FOR REVIEWS
+def get_image_reviews(image_id):
+    sql = """SELECT image_file FROM images_reviews WHERE id = ?"""
+    result = db.query(sql, [image_id])
+    return result[0][0] if result else None
+
+def get_image_id_reviews(item_id):
+    sql = """SELECT id FROM images_reviews WHERE review_id = ?"""
+    return db.query(sql, [item_id])
+
+def add_image_reviews(item_id, image):
+    sql = """INSERT INTO images_reviews (review_id, image_file) VALUES (?, ?)"""
+    db.execute(sql, [item_id, image])
+
+####################
+# This section manages images FOR USER THUMBNAILS

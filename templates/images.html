@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Pictures</title>
+</head>
+
+<body>
+  <!-- INFORMATION-->
+  <h1>Pictures for reviews</h1>
+
+  {% if session.user_id == item.user_id %}
+  <p>
+    <a href = "/edit_review/{{ item.id }}">Modify entry</a>
+    <a href = "/remove_review/{{ item.id }}">Remove entry</a>
+    <a href = "/item/{{ item.id }}"> Return to review page</a>
+  </p>
+  {% endif %}
+
+  <p>
+    This review contains {{ images | count }} images.
+  </p>
+
+  <h2>Add new image</h2>
+    <form action="/add_image" method="post" enctype="multipart/form-data">
+      <p>
+        Kuva: <input type="file" name="image" accept=".png" />
+      </p>
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" /> 
+      <input type="hidden" name="item_id" value="{{ item.id }}" /> 
+      <input type="submit" value="Lähetä" />
+    </form>
+
+    
+  <p>
+    
+  </p>
+</body>
+
+</html>

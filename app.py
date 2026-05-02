@@ -1,11 +1,6 @@
-import sqlite3
-from flask import Flask
-from flask import abort, redirect, render_template, request, session
-from werkzeug.security import check_password_hash
-import db
-import config
-import items
-import users
+import sqlite3, secrets
+from flask import Flask, abort, redirect, render_template, request, session, flash, make_response
+import config, items, users
 
 app = Flask(__name__, template_folder ='./templates')
 app.secret_key = config.secret_key
@@ -14,14 +9,6 @@ app.secret_key = config.secret_key
 def index():
     reviews = items.get_items()
     return render_template("index.html", message = "Welcome to film review site!", items=reviews)
-
-@app.route("/item/<int:item_id>")
-def show_item(item_id):
-    item = items.get_item(item_id)
-    yeet_empty_variable(item)
-    classes = items.get_classes(item_id)
-    comments = items.get_comments(item_id)
-    return render_template("review_data.html", item=item, classes=classes, comments=comments)
 
 @app.route("/register")
 def register():
@@ -39,38 +26,42 @@ def create():
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
         return "Warning: Your username has already been chosen. Please pick another one."
-
+    user_id = users.verify_user(username, password1)
+    if user_id:
+        session["user_id"] = user_id
+        session["username"] = username
+        session["csrf_token"] = secrets.token_hex(16)
     return render_template("registration_success.html")
 
 
 ##################
 # This section manages repetitive code
 
-def sanity_check(item): # Check data integrity and prevent unauthorised access
+def unauthorised_access_check(item): # Check data integrity and prevent unauthorised access
     if not item:
         abort(404)
     if item["user_id"] != session["user_id"]:
         abort(403)
 
-def kill_anons(): # No user_id => no access
+def anonymous_user_check(): # No user_id => no access
     if "user_id" not in session:
         abort(403)
 
-def kill_spaghetti(input, upper_length, lower_length):
+def remove_nonpermitted_inputs(input, upper_length, lower_length):
     if len(input) > upper_length:
         abort(403)
     if len(input) < lower_length:
         abort(403)
 
-def ghostbust(user):
+def user_not_found(user):
     if not user:
         abort(404)
 
-def yeet_rotten_apple(item):
+def no_item_403(item):
     if not item:
         abort(403)
 
-def yeet_empty_variable(item):
+def no_item_404(item):
     if not item:
         abort(404)
 
@@ -80,6 +71,14 @@ def class_dismissal(parts):
         abort(403)
     if parts[1] not in all_classes[parts[0]]:
         abort(403)
+
+def check_csrf():
+    print(session["csrf_token"], request.form["csrf_token"])
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+
 
 ###################
 # This section manages logins, and logouts
@@ -98,37 +97,42 @@ def login():
         if user_id:
             session["user_id"] = user_id
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
-            return "Warning: Double-check your username or password."
+            flash("Warning: Double-check your username or password.")
+            return redirect("/login")
 
 @app.route("/logout")
 def logout():
-    kill_anons()
+    anonymous_user_check()
     del session["user_id"]
     del session["username"]
     return redirect("/")
 
 ##################
 # This section manages the addition, modification and removal of new reviews themselves.
+
+@app.route("/item/<int:item_id>")
+def show_item(item_id):
+    item = items.get_item(item_id)
+    no_item_404(item)
+    classes = items.get_classes(item_id)
+    comments = items.get_comments(item_id)
+    images = items.get_image_id_reviews(item_id)
+    return render_template("review_data.html", item=item, classes=classes, comments=comments, images=images)
+
 @app.route("/review_paper")
 def new_review():
-    kill_anons()
+    anonymous_user_check()
     classes = items.get_all_classes()
     return render_template("review_paper.html", classes=classes)
 
 @app.route("/create_review", methods = ["POST"])
 def insert_review():
-    kill_anons()
-    # Input names are: title, review_body, stars, work, imdb_snippet (in HTML page). Linked as such
-    # title -> title
-    # session.username -> poster
-    # session.user_id -> poster_id
-    # review_body -> review_body
-    # stars -> stars
-    # work -> work
-    # work_id snippet will be worked on later. (WIP!!!)
-    # imdb_snippet -> imdb_snippet
+    anonymous_user_check()
+    check_csrf()
+
     title = request.form["title"]
     username = session["username"]
     user_id = session["user_id"]
@@ -137,10 +141,10 @@ def insert_review():
     work = request.form["work"]
     imdb_snippet = request.form["imdb_snippet"]
 
-    kill_spaghetti(title, 255, 1)
-    kill_spaghetti(review_body, 5000, 1)
-    kill_spaghetti(work, 255, 1)
-    kill_spaghetti(imdb_snippet, 255, 3)
+    remove_nonpermitted_inputs(title, 255, 1)
+    remove_nonpermitted_inputs(review_body, 5000, 1)
+    remove_nonpermitted_inputs(work, 255, 1)
+    remove_nonpermitted_inputs(imdb_snippet, 255, 3)
 
     classes = []
     for entry in request.form.getlist("classes"):
@@ -155,19 +159,11 @@ def insert_review():
 
 @app.route("/edit_review", methods = ["POST"])
 def edit_review_auxiliary():
-    kill_anons()
-    # Input names are: title, review_body, stars, work, imdb_snippet (in HTML page). Linked as such
-    # title -> title
-    # session.username -> poster
-    # session.user_id -> poster_id
-    # review_body -> review_body
-    # stars -> stars
-    # work -> work
-    # work_id snippet will be worked on later. (WIP!!!)
-    # imdb_snippet -> imdb_snippet
+    check_csrf()
+    anonymous_user_check()
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
-    sanity_check(item)
+    unauthorised_access_check(item)
     title = request.form["title"]
     review_body = request.form["review_body"]
     stars = int(request.form["stars"])
@@ -187,11 +183,11 @@ def edit_review_auxiliary():
 
 @app.route("/edit_review/<int:item_id>")
 def edit_review(item_id):
-    kill_anons()
+    check_csrf()
+    anonymous_user_check()
     item = items.get_item(item_id)
-    sanity_check(item)
+    unauthorised_access_check(item)
 
-    # Check item current classes
     all_classes = items.get_all_classes()
     classes = {}
     for my_class in all_classes:
@@ -205,9 +201,10 @@ def edit_review(item_id):
 
 @app.route("/remove_review/<int:item_id>", methods=["GET", "POST"])
 def remove_review(item_id):
-    kill_anons()
+    check_csrf()
+    anonymous_user_check()
     item = items.get_item(item_id)
-    sanity_check(item)
+    unauthorised_access_check(item)
     if request.method == "GET":
         item = items.get_item(item_id)
         return render_template("remove_review.html", item=item)
@@ -236,17 +233,49 @@ def search_review():
 @app.route("/user/<int:user_id>")
 def user_profile(user_id):
     user = users.get_user(user_id)
-    ghostbust(user)
+    user_not_found(user)
     entries = items.get_items_by_user(user_id)
-    return render_template("user_profile.html", user=user, entries=entries)
+    images = users.get_image_id_users(user_id)
+    return render_template("user_profile.html", user=user, entries=entries, images=images)
+
+# And this subsection manages images for users specifically
+@app.route("/user/add_image", methods=["POST"])
+def add_image_user():
+    anonymous_user_check()
+    check_csrf()
+    user_id = request.form["user_id"]
+    user = users.get_user(user_id)
+    user_not_found(user)
+    print(user, session["user_id"])
+    if user[0] != session["user_id"]:
+        abort(403)
+
+    file = request.files["image"]
+    if not file.filename.endswith(".png"):
+        return "Warning: PNG only. Sorry"
+
+    image = file.read()
+    if len(image) > 100 * 1024:
+        return "Warning: Photo is too large"
+
+    users.add_image_users(user_id, image)
+    return redirect("/user/" + str(user_id))
+
+@app.route("/user/image/<int:image_id>")
+def show_image_user(image_id):
+    image = users.get_image_users(image_id)
+    no_item_404(image)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/png")
+    return response
     
 ####################
 # This section manages comments
 @app.route("/new_comment", methods = ["POST"])
 def new_comment():
-    kill_anons()
-    # Input names are: title, review_body, stars, work, imdb_snippet (in HTML page). Linked as such
-    # imdb_snippet -> imdb_snippet
+    anonymous_user_check()
+    check_csrf()
     title = request.form["title"]
     comment_body = request.form["review_body"]
     username = session["username"]
@@ -255,14 +284,55 @@ def new_comment():
     root_title = request.form["review_title"]
 
     item = items.get_item(root_id)
-    yeet_rotten_apple(item)
-    kill_anons()
-    ghostbust(user_id)
+    no_item_403(item)
+    anonymous_user_check()
+    user_not_found(user_id)
 
-    kill_spaghetti(comment_body, 5000, 1)
+    remove_nonpermitted_inputs(comment_body, 5000, 1)
 
     items.add_comment(title, comment_body, username, user_id, root_id, root_title)
 
     return redirect("/item/" + str(root_id))
+
+####################
+# This section manages images
+@app.route("/images/<int:item_id>")
+def edit_images(item_id):
+    anonymous_user_check()
+    item = items.get_item(item_id)
+    unauthorised_access_check(item)
+
+    images = items.get_image_id_reviews(item_id)
+
+    return render_template("images.html", item=item, images=images)
+
+@app.route("/add_image", methods=["POST"])
+def add_image():
+    anonymous_user_check()
+    check_csrf()
+    item_id = request.form["item_id"]
+    item = items.get_item(item_id)
+    unauthorised_access_check(item)
+   
+    file = request.files["image"]
+    if not file.filename.endswith(".png"):
+        return "Warning: PNG only. Sorry"
+
+    image = file.read()
+    if len(image) > 100 * 1024:
+        return "Warning: Photo is too large"
+
+    items.add_image_reviews(item_id, image)
+    return redirect("/images/" + str(item_id))
+
+@app.route("/image/<int:image_id>")
+def show_image(image_id):
+    image = items.get_image_reviews(image_id)
+    no_item_404(image)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/png")
+    return response
+
 # Check on 127.0.0.1:5000 or localhost:5000
 # Procedure: `source ./venv/bin/activate` -> `flask run` -> check -> CTRL+C -> `deactivate`

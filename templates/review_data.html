@@ -5,7 +5,8 @@
   <title>{{ item.title }}</title>
 </head>
 
-<body>
+<body>   
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <!-- INFORMATION-->
   <h1>{{ item.title }}</h1>
 
@@ -13,8 +14,15 @@
   <p>
     <a href = "/edit_review/{{ item.id }}">Modify entry</a>
     <a href = "/remove_review/{{ item.id }}">Remove entry</a>
+    <a href = "/images/{{ item.id }}">Pictures</a>
   </p>
   {% endif %}
+
+  {% for image in images %}
+  <p>
+    <img src="/image/{{ image.id }}" />
+  </p>
+  {% endfor %}
 
   <p>
     Review: </br>
@@ -69,7 +77,7 @@
 
       <input type="hidden" name="review_id" value="{{ item.id }}"/>
       <input type="hidden" name="review_title" value="{{ item.title }}"/>
-
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
       <input type="submit" name="Comment"/>
     </form>
     

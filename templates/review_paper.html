@@ -5,7 +5,7 @@
   <title>Media4U - new review box</title>
 </head>
 
-<body>
+<body>   
 <!-- The bulk of the review system will be put in here.-->
 <!-- The implementation here is that the username and id of poster will be inserted automatically in the backend.-->
   <h1>New review</h1>
@@ -82,7 +82,7 @@
       {% endfor %}
       Note that genre separations are necessarily imperfect. Pick the one that fits your conception of the work at hand.
       </p>
-      
+     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" /> 
      <input type="reset" value="Clear page and redo"/>
      <input type="submit" value="Submit review"/>
   </form>

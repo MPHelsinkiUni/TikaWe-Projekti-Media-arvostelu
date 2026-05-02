@@ -2,7 +2,7 @@ import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 def get_user(user_id):
-    sql = """SELECT id as user_id, username, assignment_role, created_at, favourites, thumbnail FROM users WHERE id = ?"""
+    sql = """SELECT id as user_id, username, assignment_role, created_at, favourites FROM users WHERE id = ?"""
     result = db.query(sql, [user_id])
     return result[0] if result else None
 
@@ -24,3 +24,20 @@ def verify_user(username, password):
         return user_id
     else:
         return None
+    
+
+####################
+# This section manages images FOR THUMBNAILS and PROFILES
+
+def get_image_users(image_id):
+    sql = """SELECT image_file FROM images_users WHERE id = ?"""
+    result = db.query(sql, [image_id])
+    return result[0][0] if result else None
+
+def get_image_id_users(item_id):
+    sql = """SELECT id FROM images_users WHERE user_id = ?"""
+    return db.query(sql, [item_id])
+
+def add_image_users(item_id, image):
+    sql = """INSERT INTO images_users (user_id, image_file) VALUES (?, ?)"""
+    db.execute(sql, [item_id, image])
