@@ -9,20 +9,27 @@
   <h1>Welcome, {{ user.username }}!</h1>
   <p>ID: {{ user.user_id }}</p>
   
-  <h2>Images</h2>
+  <h2>Profile picture</h2>
+  {% if images %}
   {% for image in images %}
   <p>
-    <img src="/image/{{ image.id }}" />
+    <img src="/user/image/{{ image.id }}" alt="{{ image.id }}.png"/>
   </p>
   {% endfor %}
+  {% else %}
+  <p>
+    No pictures
+  </p>
+  {% endif %}
 
-  <form action="/user/add_image" method="post" enctype="multipart/form-data">
+  <form action="/user/update_image" method="post" enctype="multipart/form-data">
     <p>
-      Kuva: <input type="file" name="image" accept=".png" />
+    <label for="image">New picture:</label>
+    <input type="file" name="image" accept=".png"/>
     </p>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" /> 
     <input type="hidden" name="user_id" value="{{ session.user_id }}" /> 
-    <input type="submit" value="Lähetä" />
+    <input type="submit" value="Switch" />
   </form>
 
   <h2>Count</h2>

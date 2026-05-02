@@ -11,7 +11,7 @@
 
     <!-- Title -->
     <p>
-        Title: <br/>
+        <label for="title">Title:</label><br/>
         <input 
           type="text" 
           name="title" 
@@ -22,7 +22,7 @@
 
     <!-- Review body text-->
      <p>
-         Body: <br/>
+        <label for="review_body">Body:</label><br/>
          <textarea 
           type="text" 
           name="review_body"
@@ -33,9 +33,7 @@
 
     <!-- Pick the score from 0 to 5. Nothing means unranked. Can be null-->
     <p>
-        Stars:
-    </p>
-    <p>
+      <label for="stars">Stars:</label><br/>
       <input type="radio" name="stars" value="0" /> 0
       <input type="radio" name="stars" value="1" /> 1
       <input type="radio" name="stars" value="2" /> 2
@@ -46,7 +44,7 @@
 
     <!-- Work being reviewed. Work id will be placed automatically **according to the imdb database.** This will be separate from the name of the work according to imdb-->
      <p>
-         Work name: <br/>
+      <label for="work">Work:</label><br/>
          <input 
           type="text" 
           name="work"
@@ -57,7 +55,7 @@
 
      <!-- IMDb work snippet-->
      <p>
-         Link to work page: <br/>
+      <label for="imdb_snippet">Link to work page:</label><br/>
          <input 
           type="text" 
           name="imdb_snippet"
@@ -69,9 +67,7 @@
      <!-- Classification of the work - https://en.wikipedia.org/wiki/List_of_genres-->
       {% for class in all_classes %}
       <p>
-        
-        {{ class }}: <br/>
-
+        <label for="classes">{{ class }}:</label><br/>
         <select name="classes">
           <option value="">(select)</option>
           {% for option in all_classes[class] %}

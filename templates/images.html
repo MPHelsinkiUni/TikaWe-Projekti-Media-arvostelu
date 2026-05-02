@@ -20,15 +20,34 @@
   <p>
     This review contains {{ images | count }} images.
   </p>
-
-  <h2>Add new image</h2>
+  
+  <h2>Remove images</h2>
+    {% if not images %}
+    <p> Whoops. No images</p>
+    {% else %}
+    <form action="/remove_images" method="post">
+      <ul>
+      {% for image in images %}
+        <li>
+        <input type="checkbox" name="image_id" value="{{ image.id }}"/>
+        <img src="/image/{{ image.id }}" alt="{{ image.id }}.png" />
+        </li>
+      {% endfor %}
+      
+      </ul>
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" /> 
+      <input type="hidden" name="item_id" value="{{ item.id }}" /> 
+      <p><input type="submit" value="Remove selected" /></p>
+    </form>
+    {% endif %}
     <form action="/add_image" method="post" enctype="multipart/form-data">
       <p>
-        Kuva: <input type="file" name="image" accept=".png" />
+        <label for="image">Add new image:</label>
+        <input type="file" name="image" accept=".png" />
       </p>
       <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" /> 
       <input type="hidden" name="item_id" value="{{ item.id }}" /> 
-      <input type="submit" value="Lähetä" />
+      <input type="submit" value="Submit" />
     </form>
 
     

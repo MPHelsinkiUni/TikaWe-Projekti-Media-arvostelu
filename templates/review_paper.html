@@ -11,9 +11,8 @@
   <h1>New review</h1>
   <form action="/create_review" method="post">
 
-    <!-- Title -->
     <p>
-        Title: <br/>
+        <label for="title">Title:</label><br/>
         <input 
           type="text" 
           name="title" 
@@ -22,9 +21,8 @@
           required/>
     </p>
 
-    <!-- Review body text-->
      <p>
-         Body: <br/>
+        <label for="review_body">Body:</label><br/>
          <textarea 
           type="text" 
           name="review_body"
@@ -33,11 +31,9 @@
           required></textarea>
      </p>
 
-    <!-- Pick the score from 0 to 5. Nothing means unranked. Can be null-->
     <p>
-        Stars:
-    </p>
-    <p>
+      <label for="stars">Stars:</label><br/>
+      Select none to leave null<br/>
       <input type="radio" name="stars" value="0" /> 0
       <input type="radio" name="stars" value="1" /> 1
       <input type="radio" name="stars" value="2" /> 2
@@ -46,32 +42,30 @@
       <input type="radio" name="stars" value="5" /> 5
     </p>
 
-    <!-- Work being reviewed. Work id will be placed automatically **according to the imdb database.** This will be separate from the name of the work according to imdb-->
-     <p>
-         Work name: <br/>
+    <p>
+      <label for="work">Work:</label><br/>
          <input 
           type="text" 
           name="work"
           minlength="1"
           maxlength="255"
           required/>
-     </p>
+    </p>
 
-     <!-- IMDb work snippet-->
-     <p>
-         Link to work page: <br/>
+    <p>
+      <label for="imdb_snippet">Link to work page:</label><br/>
          <input 
           type="text" 
           name="imdb_snippet"
           minlength="3"
           maxlength="255"
           required/>
-     </p>
+    </p>
 
      <!-- Classification of the work - https://en.wikipedia.org/wiki/List_of_genres-->
       {% for class in classes %}
       <p>
-        {{ class }}: <br/>
+        <label for="classes">{{ class }}:</label><br/>
         <select name="classes">
           <option value="{{ option }}">(select)</option>
             {% for option in classes[class] %}
@@ -80,6 +74,7 @@
         </select>
       </p>
       {% endfor %}
+      <p>
       Note that genre separations are necessarily imperfect. Pick the one that fits your conception of the work at hand.
       </p>
      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" /> 

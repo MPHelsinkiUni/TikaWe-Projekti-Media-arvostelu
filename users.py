@@ -28,7 +28,6 @@ def verify_user(username, password):
 
 ####################
 # This section manages images FOR THUMBNAILS and PROFILES
-
 def get_image_users(image_id):
     sql = """SELECT image_file FROM images_users WHERE id = ?"""
     result = db.query(sql, [image_id])
@@ -38,6 +37,6 @@ def get_image_id_users(item_id):
     sql = """SELECT id FROM images_users WHERE user_id = ?"""
     return db.query(sql, [item_id])
 
-def add_image_users(item_id, image):
-    sql = """INSERT INTO images_users (user_id, image_file) VALUES (?, ?)"""
-    db.execute(sql, [item_id, image])
+def update_image_users(user_id, image):
+    sql = """UPDATE images_users SET image_file = ? WHERE user_id = ?"""
+    db.execute(sql, [image, user_id])

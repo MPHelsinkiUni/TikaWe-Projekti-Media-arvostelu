@@ -195,8 +195,6 @@ def edit_review(item_id):
     for entry in items.get_classes(item_id):
         classes[entry["title"]] = entry["value"]
 
-    print(classes, all_classes)
-
     return render_template("edit_review.html", item=item, classes=classes, all_classes=all_classes)
 
 @app.route("/remove_review/<int:item_id>", methods=["GET", "POST"])
@@ -234,19 +232,21 @@ def search_review():
 def user_profile(user_id):
     user = users.get_user(user_id)
     user_not_found(user)
+    anonymous_user_check()
+    if session["user_id"] != user_id:
+        abort(403)
     entries = items.get_items_by_user(user_id)
     images = users.get_image_id_users(user_id)
     return render_template("user_profile.html", user=user, entries=entries, images=images)
 
 # And this subsection manages images for users specifically
-@app.route("/user/add_image", methods=["POST"])
+@app.route("/user/update_image", methods=["POST"])
 def add_image_user():
     anonymous_user_check()
     check_csrf()
     user_id = request.form["user_id"]
     user = users.get_user(user_id)
     user_not_found(user)
-    print(user, session["user_id"])
     if user[0] != session["user_id"]:
         abort(403)
 
@@ -258,7 +258,7 @@ def add_image_user():
     if len(image) > 100 * 1024:
         return "Warning: Photo is too large"
 
-    users.add_image_users(user_id, image)
+    users.update_image_users(user_id, image)
     return redirect("/user/" + str(user_id))
 
 @app.route("/user/image/<int:image_id>")
@@ -333,6 +333,20 @@ def show_image(image_id):
     response = make_response(bytes(image))
     response.headers.set("Content-Type", "image/png")
     return response
+
+@app.route("/remove_images", methods=["POST"])
+def remove_images():
+    anonymous_user_check()
+    check_csrf()
+    item_id = request.form["item_id"]
+    item = items.get_item(item_id)
+    unauthorised_access_check(item)
+
+    for image_id in request.form.getlist("image_id"):
+        items.remove_image_reviews(item_id, image_id)
+
+    return redirect("/images/" + str(item_id))
+
 
 # Check on 127.0.0.1:5000 or localhost:5000
 # Procedure: `source ./venv/bin/activate` -> `flask run` -> check -> CTRL+C -> `deactivate`

@@ -20,7 +20,7 @@
 
   {% for image in images %}
   <p>
-    <img src="/image/{{ image.id }}" />
+    <img src="/image/{{ image.id }}" alt="{{ image.id }}.png"/>
   </p>
   {% endfor %}
 
@@ -56,6 +56,9 @@
 
   <!-- COMMENTS -->
   <h2>Comments</h2>
+  {% if not comments %}
+  <p>None so far. Contribute to the conversation!</p>
+  {% endif %}
   {% for comment in comments %}
   <li>
     <h3>{{ comment.comment_title}}</h3>
@@ -68,10 +71,9 @@
   {% endfor %}
   <h2>New comment</h2>
     <form action="/new_comment" method="post">
-      Comment: <br/>
-      Title: <br/>
+      <label for="title">Title:</label></br>
       <input type="text" name="title" required/></br>
-      Body: <br/>
+      <label for="review_body">Body:</label></br>
       <textarea type="text" name="review_body" rows="8" cols="60" required></textarea><br/>
 
 
