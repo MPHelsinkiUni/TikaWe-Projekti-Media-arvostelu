@@ -1,4 +1,4 @@
-import sqlite3, secrets, markupsafe
+import sqlite3, secrets, markupsafe, math
 from flask import Flask, abort, redirect, render_template, request, session, flash, make_response
 import config, items, users
 
@@ -6,9 +6,20 @@ app = Flask(__name__, template_folder ='./templates')
 app.secret_key = config.secret_key
 
 @app.route("/") # Root
-def index():
-    reviews = items.get_items()
-    return render_template("index.html", message = "Welcome to film review site!", items=reviews)
+@app.route("/<int:page>")
+def index(page=1):
+    page_size = 10
+    thread_count = items.review_count()
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/1")
+    if page > page_count:
+        return redirect("/" + str(page_count))
+
+    reviews = items.get_items(page, page_size)
+    return render_template("index.html", message = "Welcome to film review site!", page=page, page_count=page_count, items=reviews)
 
 @app.route("/register")
 def register():
@@ -22,13 +33,11 @@ def create():
     if password1 != password2:
         flash("Error: Passwords were not the same. Please double check your inputs")
         return redirect("/create")
-    
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
         flash("Error: Your username has already been chosen. Please pick another one.")
         return redirect("/create")
-        
     user_id = users.verify_user(username, password1)
     if user_id:
         session["user_id"] = user_id
@@ -89,12 +98,9 @@ def check_csrf():
 def login():
     if request.method == "GET":
         return render_template("login.html")
-        # Consider replacing with calling index() itself.
-
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        
         user_id = users.verify_user(username, password)
         if user_id:
             session["user_id"] = user_id
@@ -177,7 +183,6 @@ def edit_review_auxiliary():
     stars = request.form["stars"]
     work = request.form["work"]
     imdb_snippet = request.form["imdb_snippet"]
-
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
@@ -186,7 +191,6 @@ def edit_review_auxiliary():
             classes.append((parts[0], parts[1]))
 
     items.update_item(item_id, title, review_body, stars, work, imdb_snippet, classes)
-
     return redirect("/item/"+str(item_id))
 
 @app.route("/edit_review/<int:item_id>")
@@ -255,17 +259,14 @@ def add_image_user():
     user_not_found(user)
     if user[0] != session["user_id"]:
         abort(403)
-
     file = request.files["image"]
     if not file.filename.endswith(".png"):
         flash("Error: PNG only. Sorry")
         return redirect("/user/update_image")
-
     image = file.read()
     if len(image) > 100 * 1024:
         flash("Error: Picture is too large")
         return redirect("/user/update_image")
-    
     users.update_image_users(user_id, image)
     return redirect("/user/" + str(user_id))
 
@@ -273,11 +274,10 @@ def add_image_user():
 def show_image_user(image_id):
     image = users.get_image_users(image_id)
     no_item_404(image)
-
     response = make_response(bytes(image))
     response.headers.set("Content-Type", "image/png")
     return response
-    
+
 ####################
 # This section manages comments
 @app.route("/new_comment", methods = ["POST"])
@@ -290,16 +290,12 @@ def new_comment():
     user_id = session["user_id"]
     root_id = request.form["review_id"]
     root_title = request.form["review_title"]
-
     item = items.get_item(root_id)
     no_item_403(item)
     anonymous_user_check()
     user_not_found(user_id)
-
     remove_nonpermitted_inputs(comment_body, 5000, 1)
-
     items.add_comment(title, comment_body, username, user_id, root_id, root_title)
-
     return redirect("/item/" + str(root_id))
 
 ####################
@@ -309,9 +305,7 @@ def edit_images(item_id):
     anonymous_user_check()
     item = items.get_item(item_id)
     unauthorised_access_check(item)
-
     images = items.get_image_id_reviews(item_id)
-
     return render_template("images.html", item=item, images=images)
 
 @app.route("/add_image", methods=["POST"])
@@ -321,17 +315,14 @@ def add_image():
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
     unauthorised_access_check(item)
-   
     file = request.files["image"]
     if not file.filename.endswith(".png"):
         flash("Error: PNG only. Sorry")
         return redirect("/add_image")
-    
     image = file.read()
     if len(image) > 100 * 1024:
         flash("Error: Picture is too large")
         return redirect("/add_image")
-
     items.add_image_reviews(item_id, image)
     return redirect("/images/" + str(item_id))
 
@@ -339,7 +330,6 @@ def add_image():
 def show_image(image_id):
     image = items.get_image_reviews(image_id)
     no_item_404(image)
-
     response = make_response(bytes(image))
     response.headers.set("Content-Type", "image/png")
     return response
@@ -351,10 +341,8 @@ def remove_images():
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
     unauthorised_access_check(item)
-
     for image_id in request.form.getlist("image_id"):
         items.remove_image_reviews(item_id, image_id)
-
     return redirect("/images/" + str(item_id))
 
 

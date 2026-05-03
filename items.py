@@ -1,5 +1,5 @@
-import db
 import datetime
+import db
 
 ####################
 # This seciton handles backend functions of review retrieval.
@@ -19,9 +19,13 @@ def add_item(title, username, user_id, review_body, stars, work, imdb_snippet, c
     for title, value in classes:
         db.execute(sql, [item_id, title, value])
 
-def get_items():
-    sql = """SELECT id, title, poster, poster_id, work, time_posted, stars, imdb_snippet FROM reviews ORDER BY time_posted DESC LIMIT 5"""
-    return db.query(sql)
+def get_items(page, page_size):
+    sql = """SELECT id, title, poster, poster_id, work, time_posted, stars, imdb_snippet FROM reviews 
+             ORDER BY time_posted DESC 
+             LIMIT ? OFFSET ?"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [limit, offset])
 
 def get_item(item_id):
     sql = """SELECT reviews.id,
@@ -76,12 +80,17 @@ def remove_item(item_id):
     db.execute(sql, [item_id])
 
 def search_review(query):
-    sql = """SELECT id, title, poster 
+    sql = """SELECT id, title, poster, time_posted, work 
              FROM reviews
              WHERE title LIKE ? OR review_body LIKE ?
-             ORDER BY time_posted DESC"""
+             ORDER BY time_posted DESC
+             LIMIT 50"""
     x = "%" + query + "%"
     return db.query(sql, [x, x])
+
+def review_count():
+    sql = "SELECT COUNT(*) FROM reviews"
+    return db.query(sql)[0][0]
 
 ####################
 # This section manages class retrieval

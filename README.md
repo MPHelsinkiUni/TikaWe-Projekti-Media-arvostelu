@@ -47,3 +47,6 @@ Renamed repetitive code sections into more professional names. Enforced CSRF che
 Fixed CSRF check issues. Trimmed unnecessary code and cleaned up implementation of certain seek functions. Implemented image insertions for reviews and users separately and with separate tables
 ## 3.5.2026
 Finalised and debugged most components of the system, implemented CSS, split layout page into multiple sections, removed extraneous materials, cleaned up comments, documentation truncated and made concise. Ready for submission.
+
+# Testing with big datasets
+Upon loading in seed.py and running it normally, the app works perfectly fine and retains all base functionalities on user side, with myself having the foresight to enforce a limit on how many entries can be sent to homepage at once, though the same cannot be said of the search function, which does notably lag the page even if it is perfectly functional. This was a good wake up call to implement page settings.

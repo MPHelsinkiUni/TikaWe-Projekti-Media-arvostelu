@@ -36,9 +36,9 @@ CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     comment_title TEXT NOT NULL,
     body TEXT NOT NULL,
-    writer TEXT NOT NULL REFERENCES users (username) ON DELETE SET NULL,
+    writer TEXT REFERENCES users (username) ON DELETE SET NULL,
     writer_id INTEGER NOT NULL REFERENCES users (id) ON DELETE SET NULL,
-    review_root_title TEXT NOT NULL,
+    review_root_title TEXT,
     review_id INTEGER NOT NULL REFERENCES reviews (id) ON DELETE SET NULL,
     time_posted TIMESTAMP NOT NULL DEFAULT NOW
 );

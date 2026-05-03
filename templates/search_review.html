@@ -20,11 +20,12 @@
   {% if query %}
   <h2>Results</h2>
 
-  <ul>
     {% for result in results %}
-    <li><a href="/item/{{ result.id }}">{{ item.title }}</a></li>
+    <div class="option">
+    <a href="/item/{{ result.id }}">{{ result.title }}</a><br/>
+    Posted at {{ result.time_posted }} for {{ result.work }} by {{ result.poster }}
+    </div>
     {% endfor %}
-  </ul>
   {% endif %}
 
   {% endblock %}

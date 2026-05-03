@@ -1,5 +1,5 @@
-import db
 from werkzeug.security import generate_password_hash, check_password_hash
+import db
 
 def get_user(user_id):
     sql = """SELECT id as user_id, username, assignment_role, created_at, favourites FROM users WHERE id = ?"""
@@ -13,8 +13,9 @@ def create_user(username, password):
 
 def verify_user(username, password):
     sql = "SELECT id, password_hash FROM users WHERE username = ?"
-    result = db.query(sql, [username])[0]
-    if not result:
+    try:
+        result = db.query(sql, [username])[0]
+    except IndexError:
         return None
 
     user_id = result["id"]
