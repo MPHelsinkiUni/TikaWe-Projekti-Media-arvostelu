@@ -66,8 +66,8 @@ def update_item(item_id, title, review_body, stars, work, imdb_snippet, classes)
     db.execute(sql, [item_id])
 
     sql = """INSERT INTO categorisation (review_id, title, value) VALUES (?, ?, ?)"""
-    for title, value in classes:
-        db.execute(sql, [item_id, title, value])
+    for classy, value in classes:
+        db.execute(sql, [item_id, classy, value])
 
 def remove_item(item_id):
     sql = """DELETE FROM reviews WHERE id = ?"""
@@ -119,9 +119,20 @@ def add_comment(title, comment_body, username, user_id, root_id, root_title):
     time_posted = datetime.datetime.now()
     db.execute(sql, [title, comment_body, username, user_id, root_title, root_id, time_posted])
 
-def get_comments(item_id):
-    sql = """SELECT comment_title, body, writer, writer_id, time_posted FROM comments WHERE review_id = ? ORDER BY time_posted DESC"""
-    return db.query(sql, [item_id])
+def get_comments(item_id, page, page_size):
+    sql = """SELECT comment_title, body, writer, writer_id, time_posted 
+             FROM comments 
+             WHERE review_id = ? 
+             ORDER BY time_posted DESC
+             LIMIT ? OFFSET ?"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [item_id, limit, offset])
+
+def comment_count(item_id):
+    sql = "SELECT COUNT(*) FROM comments WHERE review_id = ?"
+    return db.query(sql, [item_id])[0][0]
+
 
 ####################
 # This section manages images FOR REVIEWS

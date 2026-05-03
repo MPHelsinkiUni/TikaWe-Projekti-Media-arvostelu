@@ -49,4 +49,41 @@ Fixed CSRF check issues. Trimmed unnecessary code and cleaned up implementation 
 Finalised and debugged most components of the system, implemented CSS, split layout page into multiple sections, removed extraneous materials, cleaned up comments, documentation truncated and made concise. Ready for submission.
 
 # Testing with big datasets
-Upon loading in seed.py and running it normally, the app works perfectly fine and retains all base functionalities on user side, with myself having the foresight to enforce a limit on how many entries can be sent to homepage at once, though the same cannot be said of the search function, which does notably lag the page even if it is perfectly functional. This was a good wake up call to implement page settings.
+Upon loading in seed.py and running it normally, the app works perfectly fine and retains all base functionalities on user side, with myself having the foresight to enforce a limit on how many entries can be sent to homepage at once, though the same cannot be said of the search function, which does notably lag the page even if it is perfectly functional. This was a good wake up call to implement page settings. However, query searches and indexing seemed to have interacted in terrible and unpredictable ways and instead I proceeded to scrap it for search and implement it only for main page and comments. Otherwise everything is functional. 
+
+An example output of browsing and insertion looked like this:
+```UNIX
+elapsed time: 0.01 s
+127.0.0.1 - - [03/May/2026 17:41:04] "GET /login HTTP/1.1" 200 -
+elapsed time: 0.01 s
+127.0.0.1 - - [03/May/2026 17:41:05] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.1 s
+127.0.0.1 - - [03/May/2026 17:41:09] "POST /login HTTP/1.1" 302 -
+elapsed time: 0.02 s
+127.0.0.1 - - [03/May/2026 17:41:10] "GET / HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 17:41:10] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 17:41:13] "GET /review_paper HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 17:41:13] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.01 s
+127.0.0.1 - - [03/May/2026 17:41:27] "POST /create_review HTTP/1.1" 302 -
+elapsed time: 0.04 s
+127.0.0.1 - - [03/May/2026 17:41:27] "GET / HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 17:41:27] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 17:41:32] "GET /search_review HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 17:41:32] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.03 s
+127.0.0.1 - - [03/May/2026 17:41:34] "GET /search_review?query=bot HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 17:41:34] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.02 s
+127.0.0.1 - - [03/May/2026 17:41:36] "GET /search_review?query=thread HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 17:41:36] "GET /static/main.css HTTP/1.1" 304 -
+```
+Even with seed.py loading a large database, no interaction lasts for longer than half a second, if even that. This database is very efficient with large numbers of users, given that the database have had indexes since the project's inception which can be verified by checking early commits. This is a very stable system.

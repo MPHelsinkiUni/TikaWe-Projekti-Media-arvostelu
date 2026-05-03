@@ -1,5 +1,5 @@
-import sqlite3, secrets, markupsafe, math
-from flask import Flask, abort, redirect, render_template, request, session, flash, make_response
+import sqlite3, secrets, markupsafe, math, time
+from flask import Flask, abort, redirect, render_template, request, session, flash, make_response, g
 import config, items, users
 
 app = Flask(__name__, template_folder ='./templates')
@@ -128,13 +128,24 @@ def show_lines(content):
 # This section manages the addition, modification and removal of new reviews themselves.
 
 @app.route("/item/<int:item_id>")
-def show_item(item_id):
+@app.route("/item/<int:item_id>/<int:page>")
+def show_item(item_id, page=1):
     item = items.get_item(item_id)
     no_item_404(item)
     classes = items.get_classes(item_id)
-    comments = items.get_comments(item_id)
     images = items.get_image_id_reviews(item_id)
-    return render_template("review_data.html", item=item, classes=classes, comments=comments, images=images)
+
+    page_size = 10
+    thread_count = items.comment_count(item_id)
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
+    comments = items.get_comments(item_id, page, page_size)
+    if page < 1:
+        return redirect("/item/" + str(item_id) + "/1")
+    if page > page_count:
+        return redirect("/item/" + str(item_id) + "/" + str(page_count))
+
+    return render_template("review_data.html", item=item, classes=classes, comments=comments, images=images, page=page, page_count=page_count)
 
 @app.route("/review_paper")
 def new_review():
@@ -344,6 +355,18 @@ def remove_images():
     for image_id in request.form.getlist("image_id"):
         items.remove_image_reviews(item_id, image_id)
     return redirect("/images/" + str(item_id))
+
+##############
+# This section deals with time
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+@app.after_request
+def after_request(response):
+    elapsed_time = round(time.time() - g.start_time, 2)
+    print("elapsed time:", elapsed_time, "s")
+    return response
 
 
 # Check on 127.0.0.1:5000 or localhost:5000

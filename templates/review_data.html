@@ -60,6 +60,7 @@
   {% if not comments %}
   <p>None so far. Contribute to the conversation!</p>
   {% endif %}
+
   {% for comment in comments %}
   <div class="option">
     <h4>{{ comment.comment_title}}</h4>
@@ -69,6 +70,12 @@
     <p>Time posted: {{ comment.time_posted }}</p>
   </div>
   {% endfor %}
+  <p>
+    <a href="/item/{{ item.id }}/{{ page - 1 }}">&lt;&lt;</a>
+    Sivu {{ page }}/{{ page_count }}
+    <a href="/item/{{ item.id }}/{{ page + 1 }}">&gt;&gt;</a>
+  </p>
+  <hr />
 
   <h2>New comment</h2>
     <form action="/new_comment" method="post">
