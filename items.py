@@ -132,6 +132,3 @@ def add_image_reviews(item_id, image):
 def remove_image_reviews(item_id, image_id):
     sql = """DELETE FROM images_reviews WHERE id = ? AND review_id = ?"""
     db.execute(sql, [image_id, item_id])
-
-####################
-# This section manages images FOR USER THUMBNAILS

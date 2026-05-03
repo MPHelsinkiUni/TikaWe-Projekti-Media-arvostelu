@@ -76,7 +76,6 @@ def class_dismissal(parts):
         abort(403)
 
 def check_csrf():
-    print(session["csrf_token"], request.form["csrf_token"])
     if "csrf_token" not in request.form:
         abort(403)
     if request.form["csrf_token"] != session["csrf_token"]:
