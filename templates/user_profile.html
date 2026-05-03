@@ -18,7 +18,12 @@
     No pictures
   </p>
   {% endif %}
-
+  
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
   <form action="/user/update_image" method="post" enctype="multipart/form-data">
     <p>
     <label for="image">New picture:</label>
@@ -37,7 +42,12 @@
   <h2>Reviews</h2>
   <ul>
     {% for entry in entries %}
-    <li><a href="/item/{{ entry.id }}">{{ entry.title }}</a></li>
+    <div class="option">
+    <a href="/item/{{ entry.id }}">{{ entry.title }}</a>
+    <p>
+      Reviewed {{ entry.work }}. Posted {{ entry.time_posted }}
+    </p>
+    </div>
     {% endfor %}
   </ul>
   <p>

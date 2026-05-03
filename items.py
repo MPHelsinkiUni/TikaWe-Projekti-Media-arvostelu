@@ -46,7 +46,7 @@ def get_item(item_id):
         return None
     
 def get_items_by_user(user_id):
-    sql = """SELECT id, title FROM reviews WHERE id = ? ORDER BY id DESC"""
+    sql = """SELECT id, title, work, time_posted FROM reviews WHERE id = ? ORDER BY id DESC"""
     return db.query(sql, [user_id])
 
 def update_item(item_id, title, review_body, stars, work, imdb_snippet, classes):
@@ -58,16 +58,21 @@ def update_item(item_id, title, review_body, stars, work, imdb_snippet, classes)
                             WHERE id = ?"""
     db.execute(sql, [title, review_body, stars, work, imdb_snippet, item_id])
 
-    sql = """DELETE FROM categorisation WHERE item_id = ?"""
+    sql = """DELETE FROM categorisation WHERE review_id = ?"""
     db.execute(sql, [item_id])
 
-    # TABLE categorisation
     sql = """INSERT INTO categorisation (review_id, title, value) VALUES (?, ?, ?)"""
     for title, value in classes:
         db.execute(sql, [item_id, title, value])
 
 def remove_item(item_id):
     sql = """DELETE FROM reviews WHERE id = ?"""
+    db.execute(sql, [item_id])
+    sql = """DELETE FROM categorisation WHERE review_id = ?"""
+    db.execute(sql, [item_id])
+    sql = """DELETE FROM images_reviews WHERE review_id = ?"""
+    db.execute(sql, [item_id])
+    sql = """DELETE FROM comments WHERE review_id = ?"""
     db.execute(sql, [item_id])
 
 def search_review(query):

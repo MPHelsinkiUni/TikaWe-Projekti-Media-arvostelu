@@ -7,17 +7,25 @@
   <h1>Pictures for reviews</h1>
 
   {% if session.user_id == item.user_id %}
-  <p>
-    <a href = "/edit_review/{{ item.id }}">Modify entry</a>
-    <a href = "/remove_review/{{ item.id }}">Remove entry</a>
-    <a href = "/item/{{ item.id }}"> Return to review page</a>
-  </p>
+  <nav>
+  <ul>
+    <li><a href = "/edit_review/{{ item.id }}">Modify entry</a></li>
+    <li><a href = "/remove_review/{{ item.id }}">Remove entry</a></li>
+    <li><a href = "/item/{{ item.id }}"> Return to review page</a></li>
+  </ul>
   {% endif %}
-
+  </nav>
   <p>
     This review contains {{ images | count }} images.
   </p>
   
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
+
+
   <h2>Remove images</h2>
     {% if not images %}
     <p> Whoops. No images</p>

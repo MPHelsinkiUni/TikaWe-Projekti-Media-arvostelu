@@ -1,4 +1,4 @@
-import sqlite3, secrets
+import sqlite3, secrets, markupsafe
 from flask import Flask, abort, redirect, render_template, request, session, flash, make_response
 import config, items, users
 
@@ -20,12 +20,15 @@ def create():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
     if password1 != password2:
-        return "Warning: Passwords were not the same. Please double check your inputs"
+        flash("Error: Passwords were not the same. Please double check your inputs")
+        return redirect("/create")
     
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
-        return "Warning: Your username has already been chosen. Please pick another one."
+        flash("Error: Your username has already been chosen. Please pick another one.")
+        return redirect("/create")
+        
     user_id = users.verify_user(username, password1)
     if user_id:
         session["user_id"] = user_id
@@ -100,7 +103,7 @@ def login():
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
-            flash("Warning: Double-check your username or password.")
+            flash("Error: Double-check your username or password.")
             return redirect("/login")
 
 @app.route("/logout")
@@ -109,6 +112,12 @@ def logout():
     del session["user_id"]
     del session["username"]
     return redirect("/")
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 ##################
 # This section manages the addition, modification and removal of new reviews themselves.
@@ -166,7 +175,7 @@ def edit_review_auxiliary():
     unauthorised_access_check(item)
     title = request.form["title"]
     review_body = request.form["review_body"]
-    stars = int(request.form["stars"])
+    stars = request.form["stars"]
     work = request.form["work"]
     imdb_snippet = request.form["imdb_snippet"]
 
@@ -183,7 +192,6 @@ def edit_review_auxiliary():
 
 @app.route("/edit_review/<int:item_id>")
 def edit_review(item_id):
-    check_csrf()
     anonymous_user_check()
     item = items.get_item(item_id)
     unauthorised_access_check(item)
@@ -199,7 +207,6 @@ def edit_review(item_id):
 
 @app.route("/remove_review/<int:item_id>", methods=["GET", "POST"])
 def remove_review(item_id):
-    check_csrf()
     anonymous_user_check()
     item = items.get_item(item_id)
     unauthorised_access_check(item)
@@ -252,12 +259,14 @@ def add_image_user():
 
     file = request.files["image"]
     if not file.filename.endswith(".png"):
-        return "Warning: PNG only. Sorry"
+        flash("Error: PNG only. Sorry")
+        return redirect("/user/update_image")
 
     image = file.read()
     if len(image) > 100 * 1024:
-        return "Warning: Photo is too large"
-
+        flash("Error: Picture is too large")
+        return redirect("/user/update_image")
+    
     users.update_image_users(user_id, image)
     return redirect("/user/" + str(user_id))
 
@@ -316,11 +325,13 @@ def add_image():
    
     file = request.files["image"]
     if not file.filename.endswith(".png"):
-        return "Warning: PNG only. Sorry"
-
+        flash("Error: PNG only. Sorry")
+        return redirect("/add_image")
+    
     image = file.read()
     if len(image) > 100 * 1024:
-        return "Warning: Photo is too large"
+        flash("Error: Picture is too large")
+        return redirect("/add_image")
 
     items.add_image_reviews(item_id, image)
     return redirect("/images/" + str(item_id))

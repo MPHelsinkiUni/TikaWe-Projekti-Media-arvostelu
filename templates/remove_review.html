@@ -5,7 +5,7 @@
 {% block content %}
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <h1>Remove review</h1>
-  <p>Warning: {{ item.title }}</p>
+  <p>Warning: <a href="/item/{{ item.id }}">{{ item.title }}</a></p>
   <p>Are you sure you would like to remove this review?</p>
   <form action="/remove_review/{{ item.id }}" method="post">
     <input type="submit" name="remove" value="Remove review">

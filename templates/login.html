@@ -5,7 +5,7 @@
 {% block content %}
   {% if session.username %}
   <p>
-    Olet kirjautunut nimellä {{ session.username }}
+    You are signed in as {{ session.username }}
   </p>
   <p>
     <a href="/logout">Kirjaudu ulos</a>
@@ -13,14 +13,19 @@
   {% else %}
   <form action="/login" method="post">
     <p>
-      Tunnus: <br />
+      Username: <br />
       <input type="text" name="username" />
     </p>
     <p>
-      Salasana: <br />
+      Password: <br />
       <input type="password" name="password" />
     </p>
     <input type="submit" value="Kirjaudu" />
   </form>
   {% endif %}
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
 {% endblock %}
