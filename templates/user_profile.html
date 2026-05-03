@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Profile: {{ user.username }}!</title>
-</head>
+{% block title %}Media4U{% endblock %}
 
-<body>
+{% block content %}
   <h1>Welcome, {{ user.username }}!</h1>
   <p>ID: {{ user.user_id }}</p>
   
@@ -46,6 +43,4 @@
   <p>
     <a href = "/"> Return to main page</a>
   </p>
-</body>
-
-</html>
+{% endblock %}

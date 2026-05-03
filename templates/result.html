@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Valinta</title>
-</head>
+{% block title %}Media4U{% endblock %}
 
-<body>
+{% block content %}
   <p>Valitsit pizzan {{ pizza }}</p>
   <p>
     Seuraavat lisät:
@@ -19,6 +16,4 @@
     Erikoistoiveet: <br />
     {{ message }}
   </p>
-</body>
-
-</html>
+{% endblock %}

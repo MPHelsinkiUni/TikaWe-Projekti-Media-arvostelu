@@ -20,9 +20,8 @@ def add_item(title, username, user_id, review_body, stars, work, imdb_snippet, c
         db.execute(sql, [item_id, title, value])
 
 def get_items():
-    sql = """SELECT id, title, poster, poster_id, stars, imdb_snippet FROM reviews ORDER BY time_posted DESC LIMIT 5"""
+    sql = """SELECT id, title, poster, poster_id, work, time_posted, stars, imdb_snippet FROM reviews ORDER BY time_posted DESC LIMIT 5"""
     return db.query(sql)
-    # Ideally, there should be work as well, but for the purposes of debugging, we do not do this.
 
 def get_item(item_id):
     sql = """SELECT reviews.id,

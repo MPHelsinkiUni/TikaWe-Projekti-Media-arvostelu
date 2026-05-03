@@ -1,0 +1,90 @@
+@font-face {
+    font-family: appleFont;
+    src: url(SF-Pro.ttf);
+}
+
+@font-face {
+    font-family: appleFontTitle;
+    src: url(SF-Pro-Display-Medium.otf);
+    font-weight: bold;
+}
+body {
+  margin: auto;
+  max-width: 50em;
+  font-family: appleFont;
+  color: white;
+  background-color: black;
+}
+
+head {
+  margin: auto;
+  max-width: 50em;
+  font-family: appleFontTitle;
+  color: white;
+  background-color: black;
+}
+
+/* This section deals with links */
+a:link {
+  color: cyan;
+}
+a:visited {
+  color: white;
+}
+a:hover {
+  color: hotpink;
+}
+a:active {
+  color: blue;
+}
+
+/* This section deals with index sections */
+.header {
+    background-color: #b5286c;
+    color: #3d0d24;
+    padding: 0.5em;
+    margin: 0.5em 0;
+    align-items: center;
+}
+.neck {
+    background-color: #58248c;
+    color: #c983eb;
+    padding: 0.5em;
+    margin: 0.5em 0;
+}
+.nav {
+    background-color: #001b7d;
+    color: black;
+    padding: 0.5em;
+    margin: 0.5em 0;
+}
+.content {
+    background-color: #8a037f;
+    color: #c983eb;
+    padding: 1.5em;
+    margin: 1.5em 0;
+}
+.option {
+  border: 2px solid black;
+  margin: 1em;
+  padding: 0.2em 0.5em;
+}
+nav {
+  text-align: center;
+}
+nav ul {
+  padding: 0;
+  margin: 0;
+}
+nav li {
+  display: inline-block;
+  padding: 0 1em;
+  margin: 0;
+}
+
+nav li:not(:last-of-type) {
+  border-right: 1px solid black;
+}
+nav li:not(:first-of-type) {
+  margin-left: -0.25em;
+} 

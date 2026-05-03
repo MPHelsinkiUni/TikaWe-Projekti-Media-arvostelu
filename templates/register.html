@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Rekisteröinti</title>
-</head>
+{% block title %}Media4U{% endblock %}
 
-<body>
+{% block content %}
   <form action="/create" method="post">
     <p>
       <label for="username">Username:</label><br/>
@@ -21,6 +18,4 @@
     </p>
     <input type="submit" value="Luo tunnus" />
   </form>
-</body>
-
-</html>
+{% endblock %}

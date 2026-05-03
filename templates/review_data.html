@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>{{ item.title }}</title>
-</head>
+{% block title %}Media4U{% endblock %}
 
-<body>   
+{% block content %}
+
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <!-- INFORMATION-->
   <h1>{{ item.title }}</h1>
@@ -86,6 +84,4 @@
   <p>
     <a href = "/"> Return to main page</a>
   </p>
-</body>
-
-</html>
+{% endblock %}

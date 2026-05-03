@@ -1,53 +1,19 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Media4U</title>
-</head>
+{% block title %}Media4U{% endblock %}
 
-<body>
-  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-  <h1>Media4U</h1>
-  <p>
-    <b>Welcome to the</b> <i>media review site</i>!
-  </p>
-
-  {% if session.username %}
-  <p>
-    Hello, <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
-  </p>
-  <p>
-    <a href="/logout">Sign out</a>
-    <!-- <a href="/user/{{ items.poster_id }}">View profile</a> -->
-  </p>
-  {% else %}
-  <p>
-    <a href="/login"> Login </a>>
-    <a href="/register"> Register </a>>
-  </p>
-  {% endif %}
-
-
-  <!-- The following will be the actual movie review feature. -->
-  <p>
-  {% if session.username %}
-    <a href="/review_paper">Place new review</a>
-  {% endif %}
-  </br>
-  <!-- The following will be the search feature. -->
-  <a href="/search_review">Search reviews</a>
-  
-  </p>
-  <!-- The following shows an excerpt of review from the database -->
+{% block content %}
   <h2>
     Latest reviews
   </h2>
-  <ul>
     {% for item in items %}
-    <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
+    <div class="option">
+    <br/>
+    <a href="/item/{{ item.id }}">{{ item.title }}</a>
+    <p>
+      {{ item.poster }} reviewed {{ item.work }}. Posted {{ item.time_posted }}
+    </p>
+    </div>
+    <br/>
     {% endfor %}
-  </ul>
-
-</body>
-
-</html>
+{% endblock %}

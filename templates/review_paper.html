@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Media4U - new review box</title>
-</head>
+{% block title %}Media4U{% endblock %}
 
-<body>   
+{% block content %}
 <!-- The bulk of the review system will be put in here.-->
 <!-- The implementation here is that the username and id of poster will be inserted automatically in the backend.-->
   <h1>New review</h1>
@@ -81,6 +78,4 @@
      <input type="reset" value="Clear page and redo"/>
      <input type="submit" value="Submit review"/>
   </form>
-</body>
-
-</html>
+{% endblock %}

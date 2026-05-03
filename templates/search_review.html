@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Media4U - Search review</title>
-</head>
+{% block title %}Media4U{% endblock %}
 
-<body>
+{% block content %}
   <h1>Search review</h1>
 
   <form action="/search_review" method="get">
@@ -30,6 +27,4 @@
   </ul>
   {% endif %}
 
-</body>
-
-</html>
+  {% endblock %}

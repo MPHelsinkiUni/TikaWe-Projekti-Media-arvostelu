@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="/static/main.css">
+<head>
+  <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+
+  <div class="header">
+  <h1>Media4U</h1>
+  </div>
+
+  <div class="neck">
+  <p>
+    <b>Welcome to the</b> <i>media review site</i>!
+  </p>
+
+  {% if session.username %}
+  <p>
+    Hello, <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+  </p>
+  {% endif %}
+
+  <nav>
+  <ul>
+  {% if session.username %}
+    <li><a href="/logout">Sign out</a></li>
+    <li><a href="/review_paper">Place new review</a></li>
+  {% else %}
+    <li><a href="/login"> Login </a></li>
+    <li><a href="/register"> Register </a></li>
+  {% endif %}
+    <li><a href="/search_review">Search reviews</a></li>
+  </ul>
+  </nav>
+  </div>
+  <!-- The following will be the actual movie review feature. -->
+
+  </br>
+  </p>
+  <!-- The following shows an excerpt of review from the database -->
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+
+</html>
