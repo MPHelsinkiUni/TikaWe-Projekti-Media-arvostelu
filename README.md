@@ -10,7 +10,6 @@ This is a repository for a web application for the University of Helsinki course
 - The user page can show all reviews and other statistics about users.
 - Reviews can be categorized by genre.
 - The user can give comments to reviews and comments can link to each other.
-- The average value of the work can be searched.
 
 # Installation
 - Install the flask library in your Python environment, local or otherwise.
